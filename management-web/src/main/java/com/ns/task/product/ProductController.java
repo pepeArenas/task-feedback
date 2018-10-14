@@ -13,9 +13,13 @@ import javax.validation.Valid;
 @Controller
 public class ProductController {
 
-    @Autowired
+
     ProductService productService;
 
+    @Autowired
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping("product")
     public String showHomePage(ModelMap model) {
@@ -24,19 +28,19 @@ public class ProductController {
         return "product";
     }
 
-    @GetMapping("/products")
+    @GetMapping("products")
     public String showProductsPage(ModelMap model) {
         model.put("products", productService.getProducts());
         return "products";
     }
 
-    @PostMapping("/product")
-    public String showAddedProductPage(ModelMap model, @Valid ProductDTO product, BindingResult result) {
+    @PostMapping("product")
+    public String showAddedProductPage(@Valid ProductDTO product, BindingResult result) {
         if (result.hasErrors()) {
             return "product";
         }
         productService.insertProduct(product);
-        return "menu";
+        return "index";
     }
 
 

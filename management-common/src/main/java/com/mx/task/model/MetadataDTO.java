@@ -2,19 +2,16 @@ package com.mx.task.model;
 
 import java.util.StringJoiner;
 
-public class MetaDTO {
+public class MetadataDTO {
 
     private String cause;
     private String message;
-    private String classResponsable;
+    private String responsibleClass;
 
-    public MetaDTO() {
-    }
-
-    public MetaDTO(String cause, String message, String classResponsable) {
+    public MetadataDTO(String cause, String message, String classResponsable) {
         this.cause = cause;
         this.message = message;
-        this.classResponsable = classResponsable;
+        this.responsibleClass = classResponsable;
     }
 
     public String getCause() {
@@ -33,20 +30,20 @@ public class MetaDTO {
         this.message = message;
     }
 
-    public String getClassResponsable() {
-        return classResponsable;
+    public String getResponsibleClass() {
+        return responsibleClass;
     }
 
-    public void setClassResponsable(String classResponsable) {
-        this.classResponsable = classResponsable;
+    public void setResponsibleClass(String responsibleClass) {
+        this.responsibleClass = responsibleClass;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", MetaDTO.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", MetadataDTO.class.getSimpleName() + "[", "]")
                 .add("cause='" + cause + "'")
                 .add("message='" + message + "'")
-                .add("classResponsable='" + classResponsable + "'")
+                .add("responsibleClass='" + responsibleClass + "'")
                 .toString();
     }
 }

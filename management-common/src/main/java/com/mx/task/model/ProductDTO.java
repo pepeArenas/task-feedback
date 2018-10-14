@@ -1,25 +1,38 @@
 package com.mx.task.model;
 
+import com.mx.task.config.properties.CommonProperties;
+import org.springframework.stereotype.Component;
+
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ProductDTO implements Serializable {
+@Component
+public class ProductDTO {
     private Integer id;
     private boolean isCorrect;
-    @Size(min = 3, max = 45, message = "Model should be between 3 and 45 characters")
+    @Size(min = 3, max = 45, message = CommonProperties.INVALID_MODEL_SIZE)
     private String model;
-    @Size(min = 3, max = 45, message = "Name should be between 3 and 45 characters")
+    @Size(min = 3, max = 45, message = CommonProperties.INVALID_NAME_SIZE)
     private String name;
-    @Min(value = 0L, message = "The value must be positive")
-    @Digits(integer = 5, fraction = 2, message = "Price shoud be 5 integer tops and 2 decimal")
+    @Min(value = 0L, message = CommonProperties.INVALID_POSIVE_PRICE)
+    @Digits(integer = 5, fraction = 2, message = CommonProperties.INVALID_PRICE_FORMAT)
     private BigDecimal price;
     private boolean isComplete;
-    private MetaDTO details;
+    private MetadataDTO metadata;
 
     public ProductDTO() {
+    }
+
+    public ProductDTO(Integer id, boolean isCorrect, String model, String name, BigDecimal price, boolean isComplete, MetadataDTO metadata) {
+        this.id = id;
+        this.isCorrect = isCorrect;
+        this.model = model;
+        this.name = name;
+        this.price = price;
+        this.isComplete = isComplete;
+        this.metadata = metadata;
     }
 
     public Integer getId() {
@@ -70,11 +83,11 @@ public class ProductDTO implements Serializable {
         isComplete = complete;
     }
 
-    public MetaDTO getDetails() {
-        return details;
+    public MetadataDTO getDetails() {
+        return metadata;
     }
 
-    public void setDetails(MetaDTO details) {
-        this.details = details;
+    public void setDetails(MetadataDTO meta) {
+        this.metadata = meta;
     }
 }

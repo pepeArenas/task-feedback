@@ -1,0 +1,5 @@
+management-web:
+  invalidNameSize: Name should be between 3 and 45 characters
+  invalidModelSize: Model should be between 3 and 45 characters
+  invalidPriceFormat: Price should be 5 integer tops and 2 decimal
+  invalidPositivePrice: The value must be positive
