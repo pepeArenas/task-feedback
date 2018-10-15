@@ -1,14 +1,13 @@
 package com.mx.task.model;
 
 import com.mx.task.config.properties.CommonProperties;
-import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.StringJoiner;
 
-@Component
 public class ProductDTO {
     private Integer id;
     private boolean isCorrect;
@@ -16,7 +15,7 @@ public class ProductDTO {
     private String model;
     @Size(min = 3, max = 45, message = CommonProperties.INVALID_NAME_SIZE)
     private String name;
-    @Min(value = 0L, message = CommonProperties.INVALID_POSIVE_PRICE)
+    @Min(value = 0L, message = CommonProperties.INVALID_POSITIVE_PRICE)
     @Digits(integer = 5, fraction = 2, message = CommonProperties.INVALID_PRICE_FORMAT)
     private BigDecimal price;
     private boolean isComplete;
@@ -89,5 +88,18 @@ public class ProductDTO {
 
     public void setDetails(MetadataDTO meta) {
         this.metadata = meta;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", ProductDTO.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("isCorrect=" + isCorrect)
+                .add("model='" + model + "'")
+                .add("name='" + name + "'")
+                .add("price=" + price)
+                .add("isComplete=" + isComplete)
+                .add("metadata=" + metadata)
+                .toString();
     }
 }

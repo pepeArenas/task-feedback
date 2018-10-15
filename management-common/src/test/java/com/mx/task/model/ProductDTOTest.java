@@ -2,7 +2,6 @@ package com.mx.task.model;
 
 import com.mx.task.config.properties.CommonProperties;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,12 +18,6 @@ import static org.junit.Assert.assertTrue;
 public class ProductDTOTest {
     private static ValidatorFactory validatorFactory;
     private static Validator validator;
-    private CommonProperties properties;
-
-    @Before
-    public void setUp() {
-        properties = new CommonProperties();
-    }
 
     @BeforeClass
     public static void createValidator() {
@@ -62,7 +55,7 @@ public class ProductDTOTest {
         // then:
         assertEquals(violations.size(), 1);
         ConstraintViolation<ProductDTO> violation = violations.iterator().next();
-        assertEquals(properties.INVALID_NAME_SIZE, violation.getMessage());
+        assertEquals(CommonProperties.INVALID_NAME_SIZE, violation.getMessage());
     }
 
     @Test
@@ -77,7 +70,7 @@ public class ProductDTOTest {
         // then:
         assertEquals(violations.size(), 1);
         ConstraintViolation<ProductDTO> violation = violations.iterator().next();
-        assertEquals(properties.INVALID_NAME_SIZE, violation.getMessage());
+        assertEquals(CommonProperties.INVALID_NAME_SIZE, violation.getMessage());
     }
 
     @Test
@@ -92,7 +85,7 @@ public class ProductDTOTest {
         // then:
         assertEquals(violations.size(), 1);
         ConstraintViolation<ProductDTO> violation = violations.iterator().next();
-        assertEquals(properties.INVALID_MODEL_SIZE, violation.getMessage());
+        assertEquals(CommonProperties.INVALID_MODEL_SIZE, violation.getMessage());
     }
 
     @Test
@@ -107,7 +100,7 @@ public class ProductDTOTest {
         // then:
         assertEquals(violations.size(), 1);
         ConstraintViolation<ProductDTO> violation = violations.iterator().next();
-        assertEquals(properties.INVALID_MODEL_SIZE, violation.getMessage());
+        assertEquals(CommonProperties.INVALID_MODEL_SIZE, violation.getMessage());
     }
 
     @Test
@@ -122,7 +115,7 @@ public class ProductDTOTest {
         // then:
         assertEquals(violations.size(), 1);
         ConstraintViolation<ProductDTO> violation = violations.iterator().next();
-        assertEquals(properties.INVALID_PRICE_FORMAT, violation.getMessage());
+        assertEquals(CommonProperties.INVALID_PRICE_FORMAT, violation.getMessage());
     }
 
     @Test
@@ -137,7 +130,7 @@ public class ProductDTOTest {
         // then:
         assertEquals(violations.size(), 1);
         ConstraintViolation<ProductDTO> violation = violations.iterator().next();
-        assertEquals(properties.INVALID_POSIVE_PRICE, violation.getMessage());
+        assertEquals(CommonProperties.INVALID_POSITIVE_PRICE, violation.getMessage());
     }
 
 }

@@ -14,10 +14,10 @@ Configutation:
       name: File_Appender
       fileName: ${log-path}/management-web.log
       PatternLayout:
-        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %L - %msg%n"
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - Line %L - %msg%n}"
   Loggers:
     Root:
-      level: info
+      level: debug
       AppenderRef:
       - ref: Console_Appender
     Logger:
@@ -25,4 +25,4 @@ Configutation:
       level: debug
       AppenderRef:
       - ref: File_Appender
-        level: error
+        level: debug

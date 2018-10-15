@@ -14,33 +14,33 @@ import javax.validation.Valid;
 public class ProductController {
 
 
-    ProductService productService;
+    private final ProductService productService;
 
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
-    @GetMapping("product")
-    public String showHomePage(ModelMap model) {
+    @GetMapping("/addProductForm")
+    public String showAddProductForm(ModelMap model) {
         model.put("product", new ProductDTO());
 
-        return "product";
+        return "addProductForm";
     }
 
-    @GetMapping("products")
+    @GetMapping("/products")
     public String showProductsPage(ModelMap model) {
         model.put("products", productService.getProducts());
         return "products";
     }
 
-    @PostMapping("product")
+    @PostMapping("/addProductForm")
     public String showAddedProductPage(@Valid ProductDTO product, BindingResult result) {
         if (result.hasErrors()) {
-            return "product";
+            return "addProductForm";
         }
         productService.insertProduct(product);
-        return "index";
+        return "productAdded";
     }
 
 

@@ -2,39 +2,15 @@ package com.mx.task.model;
 
 import java.util.StringJoiner;
 
-public class MetadataDTO {
+class MetadataDTO {
 
-    private String cause;
-    private String message;
-    private String responsibleClass;
+    private final String cause;
+    private final String message;
+    private final String responsibleClass;
 
-    public MetadataDTO(String cause, String message, String classResponsable) {
+    private MetadataDTO(String cause, String message, String responsibleClass) {
         this.cause = cause;
         this.message = message;
-        this.responsibleClass = classResponsable;
-    }
-
-    public String getCause() {
-        return cause;
-    }
-
-    public void setCause(String cause) {
-        this.cause = cause;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getResponsibleClass() {
-        return responsibleClass;
-    }
-
-    public void setResponsibleClass(String responsibleClass) {
         this.responsibleClass = responsibleClass;
     }
 

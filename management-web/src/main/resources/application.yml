@@ -3,6 +3,3 @@ spring:
     view:
       prefix: /WEB-INF/pages/
       suffix: .jsp
-server:
-  port: 8080
-
