@@ -21,26 +21,26 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/addProductForm")
-    public String showAddProductForm(ModelMap model) {
+    @GetMapping("/product")
+    public String showAddProduct(ModelMap model) {
         model.put("product", new ProductDTO());
 
-        return "addProductForm";
+        return "addProduct";
     }
 
-    @GetMapping("/products")
-    public String showProductsPage(ModelMap model) {
-        model.put("products", productService.getProducts());
-        return "products";
-    }
-
-    @PostMapping("/addProductForm")
-    public String showAddedProductPage(@Valid ProductDTO product, BindingResult result) {
+    @PostMapping("/product")
+    public String saveProduct(@Valid ProductDTO product, BindingResult result) {
         if (result.hasErrors()) {
-            return "addProductForm";
+            return "addProduct";
         }
         productService.insertProduct(product);
         return "productAdded";
+    }
+
+    @GetMapping("/products")
+    public String showProducts(ModelMap model) {
+        model.put("products", productService.getProducts());
+        return "products";
     }
 
 
