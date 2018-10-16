@@ -31,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void insertProduct(ProductDTO product) {
-        logger.debug("Sending message to RabbitMQ {}.", product.toString());
+        logger.debug("Sending message to RabbitMQ {}.", product);
         products.add(product);
 
     }
