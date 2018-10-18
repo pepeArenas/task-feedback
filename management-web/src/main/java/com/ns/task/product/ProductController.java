@@ -1,6 +1,7 @@
 package com.ns.task.product;
 
-import com.mx.task.model.ProductDTO;
+import com.ns.task.model.ProductDTO;
+import com.ns.task.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

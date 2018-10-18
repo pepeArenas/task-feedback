@@ -74,5 +74,6 @@
     <modules>
         <module>management-web</module>
         <module>management-common</module>
+        <module>management-core</module>
     </modules>
 </project>

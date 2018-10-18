@@ -1,14 +1,15 @@
-package com.mx.task.model;
+package com.ns.task.model;
 
-import com.mx.task.config.properties.CommonProperties;
+import com.ns.task.config.properties.CommonProperties;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.StringJoiner;
 
-public class ProductDTO {
+public class ProductDTO implements Serializable {
     private Integer id;
     private boolean isCorrect;
     @Size(min = 3, max = 45, message = CommonProperties.INVALID_MODEL_SIZE)

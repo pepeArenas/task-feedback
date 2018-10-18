@@ -1,8 +1,8 @@
 package com.ns.task;
 
-import com.mx.task.model.ProductDTO;
+import com.ns.task.model.ProductDTO;
 import com.ns.task.product.ProductController;
-import com.ns.task.product.ProductService;
+import com.ns.task.services.ProductService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

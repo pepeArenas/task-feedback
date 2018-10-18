@@ -1,6 +1,7 @@
 package com.ns.task.product;
 
-import com.mx.task.model.ProductDTO;
+import com.ns.task.model.ProductDTO;
+import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -30,9 +31,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void insertProduct(ProductDTO product) {
+    public ProductDTO insertProduct(ProductDTO product) {
         logger.debug("Sending message to RabbitMQ {}.", product);
         products.add(product);
+        return null;
 
     }
 }

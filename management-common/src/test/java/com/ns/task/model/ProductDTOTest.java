@@ -1,7 +1,8 @@
-package com.mx.task.model;
+package com.ns.task.model;
 
-import com.mx.task.config.properties.CommonProperties;
+import com.ns.task.config.properties.CommonProperties;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -55,7 +56,7 @@ public class ProductDTOTest {
         // then:
         assertEquals(violations.size(), 1);
         ConstraintViolation<ProductDTO> violation = violations.iterator().next();
-        assertEquals(CommonProperties.INVALID_NAME_SIZE, violation.getMessage());
+        Assert.assertEquals(CommonProperties.INVALID_NAME_SIZE, violation.getMessage());
     }
 
     @Test

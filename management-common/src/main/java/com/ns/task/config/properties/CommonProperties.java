@@ -1,4 +1,4 @@
-package com.mx.task.config.properties;
+package com.ns.task.config.properties;
 
 public class CommonProperties {
     public static final String INVALID_NAME_SIZE = "Name should be between 3 and 45 characters";
