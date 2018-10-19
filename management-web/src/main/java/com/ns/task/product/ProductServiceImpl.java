@@ -19,9 +19,9 @@ public class ProductServiceImpl implements ProductService {
 
     static {
         products = new ArrayList<>();
-        products.add(new ProductDTO(1, true, "SCW090", "SCREWDRIVER", new BigDecimal("11.34"), true, null));
-        products.add(new ProductDTO(2, true, "SCW091", "SCREWDRIVER", new BigDecimal("12.34"), true, null));
-        products.add(new ProductDTO(3, true, "SCW092", "SCREWDRIVER", new BigDecimal("13.34"), true, null));
+        products.add(new ProductDTO(1, true, "SCW090", "SCREWDRIVER", new BigDecimal("11.34"), true));
+        products.add(new ProductDTO(2, true, "SCW091", "SCREWDRIVER", new BigDecimal("12.34"), true));
+        products.add(new ProductDTO(3, true, "SCW092", "SCREWDRIVER", new BigDecimal("13.34"), true));
     }
 
 

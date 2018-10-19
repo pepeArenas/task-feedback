@@ -1,7 +1,6 @@
 package com.ns.task.product.entities;
 
 import com.ns.task.config.properties.CommonProperties;
-import com.ns.task.model.MetadataDTO;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -35,8 +34,6 @@ public class ProductEntity {
     private BigDecimal price;
     @Transient
     private boolean isComplete;
-    @Transient
-    private MetadataDTO metadata;
 
     public ProductEntity() {
     }
@@ -81,11 +78,4 @@ public class ProductEntity {
         isComplete = complete;
     }
 
-    public MetadataDTO getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(MetadataDTO metadata) {
-        this.metadata = metadata;
-    }
 }

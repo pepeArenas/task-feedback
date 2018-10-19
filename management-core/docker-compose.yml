@@ -6,18 +6,9 @@ services:
       dockerfile: mysqldb.dockerfile
     ports:
     - 3306:3306
-    networks:
-    - net-spring-db
     environment:
       MYSQL_DATABASE: ManagementProduct
       MYSQL_USER: myuser
       MYSQL_PASSWORD: mypassword
       MYSQL_ROOT_PASSWORD: myrootpassword
     container_name: mysqldbserver
-    volumes:
-    - type: bind
-      source: ./mysql
-      target: /docker-entrypoint-initdb.d 
-networks:
-  net-spring-db:
-    driver: bridge
