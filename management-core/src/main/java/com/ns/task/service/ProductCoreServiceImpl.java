@@ -1,15 +1,14 @@
-package com.ns.task.product.service;
+package com.ns.task.service;
 
 import com.ns.task.model.ProductDTO;
-import com.ns.task.product.entities.ProductEntity;
-import com.ns.task.product.repositories.ProductRepository;
+import com.ns.task.entities.ProductEntity;
+import com.ns.task.repositories.ProductRepository;
 import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,7 @@ public class ProductCoreServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> getProducts() {
-        List<ProductEntity> products = repository.findAll();
+        List<ProductEntity> products = repository.retrieveProducts();
         logger.debug("Number of returned products from DB {}", products.size());
         return products.stream()
                 .map(this::convertToDto)
@@ -40,7 +39,7 @@ public class ProductCoreServiceImpl implements ProductService {
     public ProductDTO insertProduct(ProductDTO product) {
         ProductEntity productEntity = convertToEntity(product);
         logger.debug("Sending data to DB {}", productEntity);
-        ProductEntity productSaved = repository.save(productEntity);
+        ProductEntity productSaved = repository.saveProduct(productEntity);
         logger.debug("Getting persisted data from insert to DB {}", productSaved);
         return convertToDto(productSaved);
 

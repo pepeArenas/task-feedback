@@ -34,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO insertProduct(ProductDTO product) {
         logger.debug("Sending message to RabbitMQ {}.", product);
         products.add(product);
-        return null;
+        return product;
 
     }
 }

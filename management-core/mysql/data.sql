@@ -7,7 +7,7 @@ CREATE TABLE `product` (
   `price` decimal(10,0) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_model_UNIQUE` (`name`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=206 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 

@@ -1,5 +1,5 @@
 # task-feedback
-In order to run MySQL containder we need to move to root of management-core and run this command
+In order to run MySQL container we need to move to root of management-core and run this command
 docker-compose up -d
 This will create the schema, tables and stored procedures that will need
 If we want to stop the mysql instance we type this in a terminal

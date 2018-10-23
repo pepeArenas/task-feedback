@@ -11,6 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -28,6 +30,7 @@ public class ProductControllerTest {
     @MockBean
     private ProductService service;
 
+
     @Test
     public void showAddProduct() throws Exception {
         this.mockMvc.perform(get("/product")).andDo(print()).andExpect(status().
@@ -37,15 +40,30 @@ public class ProductControllerTest {
     @Test
     public void saveProduct() throws Exception {
         when(service.insertProduct(new ProductDTO())).thenReturn(new ProductDTO());
-        this.mockMvc.perform(post("/product")).andDo(print()).andExpect(status().
-                isOk()).andExpect(view().name("productAdded"));
+        this.mockMvc.perform(post("/product")
+                .param("name", "SCREWDRIVER")
+                .param("model", "S019")
+                .param("price", String.valueOf(new BigDecimal("12.3").toString()))).
+                andDo(print()).
+                andExpect(status().isOk()).
+                andExpect(view().name("productAdded"));
     }
 
     @Test
-    public void trySaveProductWithNindingError() throws Exception {
+    public void trySaveProductWithNullValues() throws Exception {
+        when(service.insertProduct(new ProductDTO())).thenReturn(new ProductDTO());
+        this.mockMvc.perform(post("/product")).
+                andDo(print()).
+                andExpect(status().isOk()).
+                andExpect(view().name("addProduct"));
+    }
+
+    @Test
+    public void trySaveProductWithSizeErrors() throws Exception {
         mockMvc.perform(post("/product")
                 .param("name", "")
-                .param("model", "a"))
+                .param("model", "a")
+                .param("price", String.valueOf(new BigDecimal("12.3").toString())))
                 .andExpect(view().name("addProduct"))
                 .andExpect(model().errorCount(2));
     }

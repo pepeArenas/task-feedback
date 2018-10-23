@@ -1,4 +1,4 @@
-FROM mysql/mysql-server
+FROM debian:stretch-slim
 
 MAINTAINER Jesus Arenas <jesusarenasm@hotmail.com>
 

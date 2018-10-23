@@ -1,11 +1,10 @@
-package com.ns.task.product;
+package com.ns.task.services;
 
 
+import com.ns.task.entities.ProductEntity;
 import com.ns.task.model.ProductDTO;
-import com.ns.task.product.entities.ProductEntity;
-import com.ns.task.product.repositories.ProductRepository;
-import com.ns.task.product.service.ProductCoreServiceImpl;
-import com.ns.task.services.ProductService;
+import com.ns.task.repositories.ProductRepository;
+import com.ns.task.service.ProductCoreServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +46,7 @@ public class ProductCoreServiceImpTest {
         productEntity.setModel("S090");
         productEntity.setPrice(new BigDecimal("12.2"));
         productEntities.add(productEntity);
-        when(repository.findAll()).thenReturn(productEntities);
+        when(repository.retrieveProducts()).thenReturn(productEntities);
         productService.getProducts();
         assertEquals(productEntities.size(), 1);
     }
@@ -55,7 +54,7 @@ public class ProductCoreServiceImpTest {
     @Test
     public void getNoProducts() {
         List<ProductEntity> productEntities = new ArrayList<>();
-        when(repository.findAll()).thenReturn(productEntities);
+        when(repository.retrieveProducts()).thenReturn(productEntities);
         productService.getProducts();
         assertEquals(productEntities.size(), 0);
     }
@@ -71,14 +70,13 @@ public class ProductCoreServiceImpTest {
         productEntity.setName("SCREWDRIVER");
         productEntity.setModel("S090");
         productEntity.setPrice(new BigDecimal("12.20"));
-        when(repository.save(any(ProductEntity.class))).thenReturn(productEntity);
+        when(repository.saveProduct(any(ProductEntity.class))).thenReturn(productEntity);
         ProductDTO returned = productService.insertProduct(productDTO);
         ArgumentCaptor<ProductEntity> productArguments = ArgumentCaptor.forClass(ProductEntity.class);
-        verify(repository, timeout(1)).save(productArguments.capture());
+        verify(repository, timeout(1)).saveProduct(productArguments.capture());
         verifyNoMoreInteractions(repository);
         assertProduct(returned, productEntity);
     }
-
 
     @Test
     public void whenConvertPostEntityToPostDto_thenCorrect() {
