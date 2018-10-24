@@ -85,6 +85,7 @@ public class ProductDTO implements Serializable {
         isComplete = complete;
     }
 
+
     @Override
     public String toString() {
         return new StringJoiner(", ", ProductDTO.class.getSimpleName() + "[", "]")

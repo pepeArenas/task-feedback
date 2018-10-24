@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Repository
@@ -21,12 +22,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
 
     @Override
-    public ProductEntity saveProduct(ProductEntity product) {
+    public ProductEntity saveProduct(ProductEntity product)  throws SQLIntegrityConstraintViolationException {
         StoredProcedureQuery insertion = manager.createNamedStoredProcedureQuery("insertProduct");
         insertion.setParameter("productName", product.getName());
         insertion.setParameter("model", product.getModel());
         insertion.setParameter("price", product.getPrice());
-        insertion.execute();
+        boolean resultForInsertion = insertion.execute();
+
         return product;
     }
 }

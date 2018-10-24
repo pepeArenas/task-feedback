@@ -1,7 +1,7 @@
 package com.ns.task.service;
 
-import com.ns.task.model.ProductDTO;
 import com.ns.task.entities.ProductEntity;
+import com.ns.task.model.ProductDTO;
 import com.ns.task.repositories.ProductRepository;
 import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,9 +40,15 @@ public class ProductCoreServiceImpl implements ProductService {
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
         ProductEntity productEntity = convertToEntity(product);
-        logger.debug("Sending data to DB {}", productEntity);
-        ProductEntity productSaved = repository.saveProduct(productEntity);
-        logger.debug("Getting persisted data from insert to DB {}", productSaved);
+        ProductEntity productSaved = new ProductEntity();
+        try {
+            logger.debug("Sending data to DB {}", productEntity);
+            productSaved = repository.saveProduct(productEntity);
+            logger.debug("Getting persisted data from insert to DB {}", productSaved);
+        } catch (SQLIntegrityConstraintViolationException integrity) {
+            logger.debug("An exception has been thrown");
+        }
+
         return convertToDto(productSaved);
 
     }

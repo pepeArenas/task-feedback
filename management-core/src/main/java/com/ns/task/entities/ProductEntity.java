@@ -75,5 +75,5 @@ public class ProductEntity {
     public void setComplete(boolean complete) {
         isComplete = complete;
     }
-
+    
 }

@@ -5,6 +5,7 @@ import com.ns.task.entities.ProductEntity;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.repositories.ProductRepository;
 import com.ns.task.service.ProductCoreServiceImpl;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +33,16 @@ public class ProductCoreServiceImpTest {
     private ProductRepository repository;
     @Spy
     private ModelMapper modelMapper;
+    private List<ProductEntity> productEntities;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         productService = new ProductCoreServiceImpl(modelMapper, repository);
+        productEntities = new ArrayList<>();
     }
 
     @Test
     public void getProducts() {
-        List<ProductEntity> productEntities = new ArrayList<>();
         ProductEntity productEntity = new ProductEntity();
         productEntity.setId(1);
         productEntity.setName("SCREWDRIVER");
@@ -47,20 +50,20 @@ public class ProductCoreServiceImpTest {
         productEntity.setPrice(new BigDecimal("12.2"));
         productEntities.add(productEntity);
         when(repository.retrieveProducts()).thenReturn(productEntities);
-        productService.getProducts();
-        assertEquals(productEntities.size(), 1);
+        List<ProductDTO> products = productService.getProducts();
+        assertEquals(products.size(), 1);
+        assertProduct(products.get(0), productEntities.get(0));
     }
 
     @Test
     public void getNoProducts() {
-        List<ProductEntity> productEntities = new ArrayList<>();
         when(repository.retrieveProducts()).thenReturn(productEntities);
-        productService.getProducts();
-        assertEquals(productEntities.size(), 0);
+        List<ProductDTO> products = productService.getProducts();
+        assertEquals(products.size(), 0);
     }
 
     @Test
-    public void insertProduct() {
+    public void insertProduct() throws SQLIntegrityConstraintViolationException {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("S090");
@@ -76,6 +79,21 @@ public class ProductCoreServiceImpTest {
         verify(repository, timeout(1)).saveProduct(productArguments.capture());
         verifyNoMoreInteractions(repository);
         assertProduct(returned, productEntity);
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenInsertDuplicateProduct() {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setName("SCREWDRIVER");
+        productDTO.setModel("S090");
+        productDTO.setPrice(new BigDecimal("12.20"));
+        try {
+            when(repository.saveProduct(any(ProductEntity.class))).thenThrow(SQLIntegrityConstraintViolationException.class);
+            productService.insertProduct(productDTO);
+        } catch (SQLIntegrityConstraintViolationException integrity) {
+            Assertions.assertThat(integrity instanceof SQLIntegrityConstraintViolationException);
+        }
+
     }
 
     @Test
