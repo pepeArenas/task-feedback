@@ -8,10 +8,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
@@ -39,47 +39,66 @@ public class ProductRepositoryImplTest {
     }
 
     @Test
-    public void saveProduct() throws SQLIntegrityConstraintViolationException {
+    public void saveProduct() {
         ProductEntity productSaved = repository.saveProduct(hammerTest);
-        List<ProductEntity> productsReturned = repository.findByNameAndModel(
+        List<ProductEntity> productsReturned = repository.findByNameAndModelAndPrice(
                 productSaved.getName(),
-                productSaved.getModel());
+                productSaved.getModel(),
+                productSaved.getPrice());
         Assertions.assertThat(productsReturned.isEmpty()).isFalse();
+        Assertions.assertThat(productsReturned.size()).isEqualTo(1);
+        validateContentOfFieldsAreNotNull(productsReturned.get(0));
+        validateContentOfFieldsAreEqualsBeforeAndAfterSave(hammerTest, productsReturned.get(0));
     }
 
     @Test
-    public void shouldSaveProductSameNameDifferentModel() throws SQLIntegrityConstraintViolationException {
-        screwdriverTest.setName("TEST_SCREWDRIVER");
-        screwdriverTest.setModel("TEST_S090");
-        screwdriverTest.setPrice(new BigDecimal("12.90"));
+    public void shouldSaveProductSameNameDifferentModel() {
         ProductEntity sameNameAndModel = new ProductEntity();
         sameNameAndModel.setName("TEST_SCREWDRIVER2");
         sameNameAndModel.setModel("TEST_S090");
         sameNameAndModel.setPrice(new BigDecimal("12.90"));
         repository.saveProduct(screwdriverTest);
         repository.saveProduct(sameNameAndModel);
-        List<ProductEntity> productsReturned = repository.findByNameContains(
-                "TEST_");
+        List<ProductEntity> productsReturned = repository.findByNameContainsOrderByNameAsc("TEST_");
         Assertions.assertThat(productsReturned.isEmpty()).isFalse();
         Assertions.assertThat(productsReturned.size()).isEqualTo(2);
-
+        validateContentOfFieldsAreNotNull(productsReturned.get(0));
+        validateContentOfFieldsAreNotNull(productsReturned.get(1));
+        validateContentOfFieldsAreEqualsBeforeAndAfterSave(screwdriverTest, productsReturned.get(0));
+        validateContentOfFieldsAreEqualsBeforeAndAfterSave(sameNameAndModel, productsReturned.get(1));
     }
 
     @Test
-    public void retrieveAllProduct() throws SQLIntegrityConstraintViolationException {
+    public void retrieveAllProduct() {
         repository.saveProduct(hammerTest);
         repository.saveProduct(screwdriverTest);
-        List<ProductEntity> productReturnedFormDB = repository.retrieveProducts();
+        List<ProductEntity> productReturnedFormDB = repository.findByNameContainsOrderByNameAsc("TEST_");
         Assertions.assertThat(productReturnedFormDB.isEmpty()).isFalse();
+        Assertions.assertThat(productReturnedFormDB.size()).isEqualTo(2);
+        validateContentOfFieldsAreNotNull(productReturnedFormDB.get(0));
+        validateContentOfFieldsAreNotNull(productReturnedFormDB.get(1));
+        validateContentOfFieldsAreEqualsBeforeAndAfterSave(hammerTest, productReturnedFormDB.get(0));
+        validateContentOfFieldsAreEqualsBeforeAndAfterSave(screwdriverTest, productReturnedFormDB.get(1));
     }
 
-    @Test
-    public void trySaveDuplicateProduct() {
-        try {
-            repository.saveProduct(hammerTest);
-            repository.saveProduct(hammerTest);
-        } catch (Exception exception) {
-            Assertions.assertThat(exception instanceof SQLIntegrityConstraintViolationException);
-        }
+    @Test(expected = DataIntegrityViolationException.class)
+    public void trySaveDuplicateProduct() throws DataIntegrityViolationException {
+        repository.saveProduct(hammerTest);
+        repository.saveProduct(hammerTest);
+    }
+
+    private void validateContentOfFieldsAreNotNull(ProductEntity product) {
+        Assertions.assertThat(product.getId()).isNotNull();
+        Assertions.assertThat(product.getName()).isNotNull();
+        Assertions.assertThat(product.getModel()).isNotNull();
+        Assertions.assertThat(product.getPrice()).isNotNull();
+    }
+
+    private void validateContentOfFieldsAreEqualsBeforeAndAfterSave(
+            ProductEntity productAfterSaved,
+            ProductEntity productBeforeSaved) {
+        Assertions.assertThat(productAfterSaved.getName()).isEqualTo(productBeforeSaved.getName());
+        Assertions.assertThat(productAfterSaved.getModel()).isEqualTo(productBeforeSaved.getModel());
+        Assertions.assertThat(productAfterSaved.getPrice()).isEqualTo(productBeforeSaved.getPrice());
     }
 }

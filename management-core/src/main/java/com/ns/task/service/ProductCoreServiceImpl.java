@@ -10,7 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,18 +37,12 @@ public class ProductCoreServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO insertProduct(ProductDTO product) {
+    public ProductDTO insertProduct(ProductDTO product){
         ProductEntity productEntity = convertToEntity(product);
-        ProductEntity productSaved = new ProductEntity();
-        try {
-            logger.debug("Sending data to DB {}", productEntity);
-            productSaved = repository.saveProduct(productEntity);
-            logger.debug("Getting persisted data from insert to DB {}", productSaved);
-        } catch (SQLIntegrityConstraintViolationException integrity) {
-            logger.debug("An exception has been thrown");
-        }
-
-        return convertToDto(productSaved);
+        logger.debug("Sending data to DB {}", productEntity);
+        productEntity = repository.saveProduct(productEntity);
+        logger.debug("Getting persisted data from insert to DB {}", productEntity);
+        return convertToDto(productEntity);
 
     }
 

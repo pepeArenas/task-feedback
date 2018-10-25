@@ -5,7 +5,6 @@ import com.ns.task.entities.ProductEntity;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.repositories.ProductRepository;
 import com.ns.task.service.ProductCoreServiceImpl;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +13,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +62,7 @@ public class ProductCoreServiceImpTest {
     }
 
     @Test
-    public void insertProduct() throws SQLIntegrityConstraintViolationException {
+    public void insertProduct() throws DataIntegrityViolationException {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("S090");
@@ -81,19 +80,14 @@ public class ProductCoreServiceImpTest {
         assertProduct(returned, productEntity);
     }
 
-    @Test
+    @Test(expected = DataIntegrityViolationException.class)
     public void shouldThrowAnExceptionWhenInsertDuplicateProduct() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("S090");
         productDTO.setPrice(new BigDecimal("12.20"));
-        try {
-            when(repository.saveProduct(any(ProductEntity.class))).thenThrow(SQLIntegrityConstraintViolationException.class);
-            productService.insertProduct(productDTO);
-        } catch (SQLIntegrityConstraintViolationException integrity) {
-            Assertions.assertThat(integrity instanceof SQLIntegrityConstraintViolationException);
-        }
-
+        when(repository.saveProduct(any(ProductEntity.class))).thenThrow(DataIntegrityViolationException.class);
+        productService.insertProduct(productDTO);
     }
 
     @Test
@@ -103,7 +97,6 @@ public class ProductCoreServiceImpTest {
         entity.setName("SCREWDRIVER");
         entity.setModel("S090");
         entity.setPrice(new BigDecimal("12.90"));
-
         ProductDTO postDto = modelMapper.map(entity, ProductDTO.class);
         assertProduct(postDto, entity);
     }

@@ -16,3 +16,15 @@ management-core will run:
 
 MySQL docker container will run:
 	localhost:3306
+
+Tips
+If we move something from data.sql or from the docker configuration is better to delete the
+container and recreate it
+
+For delete
+Stop all the docker containers with:
+docker-compose stop  
+One stopped run the following command in order to remove them
+docker-compose rm
+In order to recreate them run the following:
+docker-compose up --build -d
