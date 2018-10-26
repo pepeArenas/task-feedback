@@ -2,6 +2,7 @@ package com.ns.task.services;
 
 
 import com.ns.task.entities.ProductEntity;
+import com.ns.task.exceptions.ProductManagementException;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.repositories.ProductRepository;
 import com.ns.task.service.ProductCoreServiceImpl;
@@ -80,7 +81,7 @@ public class ProductCoreServiceImpTest {
         assertProduct(returned, productEntity);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test(expected = ProductManagementException.class)
     public void shouldThrowAnExceptionWhenInsertDuplicateProduct() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setName("SCREWDRIVER");

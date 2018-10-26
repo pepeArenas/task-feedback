@@ -1,6 +1,7 @@
 package com.ns.task.repositories;
 
 import com.ns.task.entities.ProductEntity;
+import com.ns.task.exceptions.ProductManagementException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,10 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
     List<ProductEntity> findByNameAndModelAndPrice(String name, String model, BigDecimal price);
 
     List<ProductEntity> findByNameContainsOrderByNameAsc(String name);
+
+    List<ProductEntity> retrieveProducts();
+
+    ProductEntity saveProduct(ProductEntity product) throws ProductManagementException;
 
 
 }

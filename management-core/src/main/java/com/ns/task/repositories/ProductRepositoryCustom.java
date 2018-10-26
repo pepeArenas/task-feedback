@@ -1,12 +1,12 @@
 package com.ns.task.repositories;
 
 import com.ns.task.entities.ProductEntity;
-import org.springframework.dao.DataIntegrityViolationException;
+import com.ns.task.exceptions.ProductManagementException;
 
 import java.util.List;
 
 public interface ProductRepositoryCustom {
     List<ProductEntity> retrieveProducts();
 
-    ProductEntity saveProduct(ProductEntity product) throws DataIntegrityViolationException;
+    ProductEntity saveProduct(ProductEntity product) throws ProductManagementException;
 }
