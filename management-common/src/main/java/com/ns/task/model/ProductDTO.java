@@ -1,37 +1,40 @@
-package com.mx.task.model;
+package com.ns.task.model;
 
-import com.mx.task.config.properties.CommonProperties;
+import com.ns.task.config.properties.CommonProperties;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.StringJoiner;
 
-public class ProductDTO {
+public class ProductDTO implements Serializable {
     private Integer id;
     private boolean isCorrect;
+    @NotNull
     @Size(min = 3, max = 45, message = CommonProperties.INVALID_MODEL_SIZE)
     private String model;
+    @NotNull
     @Size(min = 3, max = 45, message = CommonProperties.INVALID_NAME_SIZE)
     private String name;
+    @NotNull
     @Min(value = 0L, message = CommonProperties.INVALID_POSITIVE_PRICE)
     @Digits(integer = 5, fraction = 2, message = CommonProperties.INVALID_PRICE_FORMAT)
     private BigDecimal price;
     private boolean isComplete;
-    private MetadataDTO metadata;
 
     public ProductDTO() {
     }
 
-    public ProductDTO(Integer id, boolean isCorrect, String model, String name, BigDecimal price, boolean isComplete, MetadataDTO metadata) {
+    public ProductDTO(Integer id, boolean isCorrect, String model, String name, BigDecimal price, boolean isComplete) {
         this.id = id;
         this.isCorrect = isCorrect;
         this.model = model;
         this.name = name;
         this.price = price;
         this.isComplete = isComplete;
-        this.metadata = metadata;
     }
 
     public Integer getId() {
@@ -82,13 +85,6 @@ public class ProductDTO {
         isComplete = complete;
     }
 
-    public MetadataDTO getDetails() {
-        return metadata;
-    }
-
-    public void setDetails(MetadataDTO meta) {
-        this.metadata = meta;
-    }
 
     @Override
     public String toString() {
@@ -99,7 +95,6 @@ public class ProductDTO {
                 .add("name='" + name + "'")
                 .add("price=" + price)
                 .add("isComplete=" + isComplete)
-                .add("metadata=" + metadata)
                 .toString();
     }
 }
