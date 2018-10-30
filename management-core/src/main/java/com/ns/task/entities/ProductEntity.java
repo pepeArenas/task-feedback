@@ -30,8 +30,6 @@ public class ProductEntity {
     @Min(value = 0L, message = CommonProperties.INVALID_POSITIVE_PRICE)
     @Digits(integer = 5, fraction = 2, message = CommonProperties.INVALID_PRICE_FORMAT)
     private BigDecimal price;
-    @Transient
-    private boolean isComplete;
 
     public ProductEntity() {
     }
@@ -68,12 +66,4 @@ public class ProductEntity {
         this.price = price;
     }
 
-    public boolean isComplete() {
-        return isComplete;
-    }
-
-    public void setComplete(boolean complete) {
-        isComplete = complete;
-    }
-    
 }

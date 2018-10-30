@@ -1,5 +1,7 @@
-package com.ns.task.exceptions;
+package com.ns.task.exception;
 
+import com.ns.task.exceptions.ProductManagementApiError;
+import com.ns.task.exceptions.ProductManagementException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

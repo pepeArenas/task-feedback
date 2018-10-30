@@ -18,10 +18,13 @@ import java.util.stream.Collectors;
 @Service
 public class ProductCoreServiceImpl implements ProductService {
 
-    private final ModelMapper mapper;
-    private final ProductRepository repository;
+
+    private ModelMapper mapper;
+    private ProductRepository repository;
     private static final Logger logger = LogManager.getLogger();
 
+    public ProductCoreServiceImpl() {
+    }
 
     @Autowired
     public ProductCoreServiceImpl(ModelMapper mapper, ProductRepository repository) {
@@ -46,7 +49,7 @@ public class ProductCoreServiceImpl implements ProductService {
             productEntity = repository.saveProduct(productEntity);
             logger.debug("Getting persisted data from insert to DB {}", productEntity);
         } catch (DataIntegrityViolationException exception) {
-            throw new ProductManagementException("Name and model of the product exists already", exception);
+            throw new ProductManagementException("Name and model of the service exists already", exception);
         }
         return convertToDto(productEntity);
 
