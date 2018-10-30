@@ -33,10 +33,12 @@ public class ProductController {
     @PostMapping("/product")
     public String saveProduct(@ModelAttribute("product") @Valid ProductDTO product, BindingResult result) {
         if (result.hasErrors()) {
-
             return "addProduct";
         }
-        productService.insertProduct(product);
+        ProductDTO productDTO = productService.insertProduct(product);
+        if (!productDTO.getComplete()) {
+            return "managementError";
+        }
         return "productAdded";
     }
 

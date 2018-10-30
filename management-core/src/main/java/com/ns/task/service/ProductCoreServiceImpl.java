@@ -1,7 +1,8 @@
 package com.ns.task.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ns.task.config.ProducerCore;
 import com.ns.task.entities.ProductEntity;
-import com.ns.task.exceptions.ProductManagementException;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.repositories.ProductRepository;
 import com.ns.task.services.ProductService;
@@ -22,6 +23,8 @@ public class ProductCoreServiceImpl implements ProductService {
     private ModelMapper mapper;
     private ProductRepository repository;
     private static final Logger logger = LogManager.getLogger();
+    @Autowired
+    ProducerCore producerCore;
 
     public ProductCoreServiceImpl() {
     }
@@ -47,9 +50,18 @@ public class ProductCoreServiceImpl implements ProductService {
         try {
             logger.debug("Sending data to DB {}", productEntity);
             productEntity = repository.saveProduct(productEntity);
+            product.setComplete(false);
+            product.setMessage("Name and model of the service exists already");
             logger.debug("Getting persisted data from insert to DB {}", productEntity);
         } catch (DataIntegrityViolationException exception) {
-            throw new ProductManagementException("Name and model of the service exists already", exception);
+            //throw new ProductManagementException("Name and model of the service exists already", exception);
+            product.setComplete(false);
+            product.setMessage("Name and model of the service exists already");
+            try {
+                producerCore.produce(product);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
         return convertToDto(productEntity);
 

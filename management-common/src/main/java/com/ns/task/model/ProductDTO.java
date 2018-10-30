@@ -22,9 +22,12 @@ public class ProductDTO implements Serializable {
     @Min(value = 0L, message = CommonProperties.INVALID_POSITIVE_PRICE)
     @Digits(integer = 5, fraction = 2, message = CommonProperties.INVALID_PRICE_FORMAT)
     private BigDecimal price;
+    private Boolean isComplete;
+    private String message;
 
 
     public ProductDTO() {
+        isComplete = false;
     }
 
     public ProductDTO(Integer id, String model, String name, BigDecimal price) {
@@ -32,6 +35,15 @@ public class ProductDTO implements Serializable {
         this.model = model;
         this.name = name;
         this.price = price;
+    }
+
+    public ProductDTO(Integer id, String model, String name, BigDecimal price, String message, Boolean isComplete) {
+        this.id = id;
+        this.model = model;
+        this.name = name;
+        this.price = price;
+        this.isComplete = isComplete;
+        this.message = message;
     }
 
     public Integer getId() {
@@ -66,6 +78,21 @@ public class ProductDTO implements Serializable {
         this.price = price;
     }
 
+    public Boolean getComplete() {
+        return isComplete;
+    }
+
+    public void setComplete(Boolean complete) {
+        isComplete = complete;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     @Override
     public String toString() {
@@ -74,6 +101,8 @@ public class ProductDTO implements Serializable {
                 .add("model='" + model + "'")
                 .add("name='" + name + "'")
                 .add("price=" + price)
+                .add("isComplete=" + isComplete)
+                .add("message='" + message + "'")
                 .toString();
     }
 }
