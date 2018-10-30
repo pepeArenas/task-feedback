@@ -1,6 +1,6 @@
 package com.ns.task;
 
-import com.ns.task.home.HomeController;
+import com.ns.task.controllers.HomeController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

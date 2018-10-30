@@ -1,7 +1,7 @@
 package com.ns.task;
 
 import com.ns.task.model.ProductDTO;
-import com.ns.task.product.ProductController;
+import com.ns.task.controllers.ProductController;
 import com.ns.task.services.ProductService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package com.ns.task.product;
+package com.ns.task.controllers;
 
 import com.ns.task.model.ProductDTO;
 import com.ns.task.services.ProductService;
