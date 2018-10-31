@@ -13,6 +13,10 @@ public class RabbitConfig {
     public static final String EXCHANGE_GET = "x.management.get";
     public static final String ROUTING_KEY_GET = "management.get";
     public static final String QUEUE_GET = "q.management.get";
+    public static final String HOSTNAME = "localhost";
+    public static final String USERNAME = "admin";
+    public static final String PASSWORD = "admin";
+    public static final int PORT = 5672;
 
     @Bean
     Exchange getExchange() {
