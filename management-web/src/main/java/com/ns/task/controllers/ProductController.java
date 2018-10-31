@@ -35,10 +35,7 @@ public class ProductController {
         if (result.hasErrors()) {
             return "addProduct";
         }
-        ProductDTO productDTO = productService.insertProduct(product);
-        if (!productDTO.getComplete()) {
-            return "managementError";
-        }
+        productService.insertProduct(product);
         return "productAdded";
     }
 

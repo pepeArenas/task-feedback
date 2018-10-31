@@ -24,7 +24,8 @@ public class Producer {
 
     public void produce(ProductDTO product) throws JsonProcessingException {
         String productAsJSON = mapper.writeValueAsString(product);
-        amqpTemplate.convertAndSend(ProducerConfig.EXCHANGE, ProducerConfig.ROUTING_KEY, productAsJSON);
+        Object o = amqpTemplate.convertSendAndReceive(ProducerConfig.EXCHANGE, ProducerConfig.ROUTING_KEY, productAsJSON);
+        logger.info("Sending message {}", o);
         logger.info("Sending message = {} to queue {}", productAsJSON, ProducerConfig.QUEUE);
     }
 }

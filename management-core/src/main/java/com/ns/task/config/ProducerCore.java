@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProducerCore {
     private AmqpTemplate amqpTemplate;
-    public static final String EXCHANGE = "x.management.ex";
-    public static final String ROUTING_KEY = "management.ex";
-    public static final String QUEUE = "q.management.insert.ex";
+    public static final String EXCHANGE = "x.management";
+    public static final String ROUTING_KEY = "management";
+    public static final String QUEUE = "q.management.insert";
 
     @Autowired
     public ProducerCore(AmqpTemplate amqpTemplate) {

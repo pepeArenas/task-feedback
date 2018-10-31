@@ -1,5 +1,6 @@
 package com.ns.task.model;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.ns.task.config.properties.CommonProperties;
 
 import javax.validation.constraints.Digits;
@@ -22,22 +23,13 @@ public class ProductDTO implements Serializable {
     @Min(value = 0L, message = CommonProperties.INVALID_POSITIVE_PRICE)
     @Digits(integer = 5, fraction = 2, message = CommonProperties.INVALID_PRICE_FORMAT)
     private BigDecimal price;
-    private Boolean isComplete;
+    private Boolean isComplete = false;
     private String message;
 
-
     public ProductDTO() {
-        isComplete = false;
     }
 
-    public ProductDTO(Integer id, String model, String name, BigDecimal price) {
-        this.id = id;
-        this.model = model;
-        this.name = name;
-        this.price = price;
-    }
-
-    public ProductDTO(Integer id, String model, String name, BigDecimal price, String message, Boolean isComplete) {
+    public ProductDTO(Integer id, String model, String name, BigDecimal price, Boolean isComplete, String message) {
         this.id = id;
         this.model = model;
         this.name = name;
@@ -50,6 +42,7 @@ public class ProductDTO implements Serializable {
         return id;
     }
 
+    @JsonSetter("id")
     public void setId(Integer id) {
         this.id = id;
     }
@@ -58,6 +51,7 @@ public class ProductDTO implements Serializable {
         return model;
     }
 
+    @JsonSetter("model")
     public void setModel(String model) {
         this.model = model;
     }
@@ -66,6 +60,7 @@ public class ProductDTO implements Serializable {
         return name;
     }
 
+    @JsonSetter("name")
     public void setName(String name) {
         this.name = name;
     }
@@ -74,6 +69,7 @@ public class ProductDTO implements Serializable {
         return price;
     }
 
+    @JsonSetter("price")
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
@@ -81,6 +77,7 @@ public class ProductDTO implements Serializable {
     public Boolean getComplete() {
         return isComplete;
     }
+
 
     public void setComplete(Boolean complete) {
         isComplete = complete;

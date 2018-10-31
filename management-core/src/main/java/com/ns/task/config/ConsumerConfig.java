@@ -19,6 +19,9 @@ public class ConsumerConfig {
     public static final String EXCHANGE = "x.management";
     public static final String ROUTING_KEY = "management";
     public static final String QUEUE = "q.management.insert";
+    public static final String EXCHANGE_GET = "x.management.get";
+    public static final String ROUTING_KEY_GET = "management.get";
+    public static final String QUEUE_GET = "q.management.get";
     public static final String HOSTNAME = "localhost";
     public static final String USERNAME = "admin";
     public static final String PASSWORD = "admin";
@@ -41,6 +44,27 @@ public class ConsumerConfig {
     @Bean
     Queue getQueue() {
         return QueueBuilder.durable(QUEUE).
+                autoDelete().
+                build();
+    }
+
+    @Bean
+    Exchange getExchangeForGet() {
+        return ExchangeBuilder.directExchange(EXCHANGE_GET).
+                build();
+    }
+
+    @Bean
+    Binding getBindingForGet() {
+        return BindingBuilder.bind(getQueueForGet()).
+                to(getExchangeForGet()).
+                with(ROUTING_KEY_GET).
+                noargs();
+    }
+
+    @Bean
+    Queue getQueueForGet() {
+        return QueueBuilder.durable(QUEUE_GET).
                 autoDelete().
                 build();
     }

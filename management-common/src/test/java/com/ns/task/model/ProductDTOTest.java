@@ -1,5 +1,7 @@
 package com.ns.task.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ns.task.config.properties.CommonProperties;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -10,6 +12,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -33,6 +36,7 @@ public class ProductDTOTest {
 
     @Test
     public void productShouldNoViolations() {
+        ObjectMapper mapper = new ObjectMapper();
         // given:
         ProductDTO product = new ProductDTO();
         product.setName("Screwdriver");
@@ -42,6 +46,18 @@ public class ProductDTOTest {
         Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
         // then:
         assertTrue(violations.isEmpty());
+        try {
+            String a = mapper.writeValueAsString(product);
+
+            String JSON = "{\"id\":null,\"model\":\"TRE345\",\"name\":\"TRACKTOR\",\"price\":22,\"message\":null,\"complete\":false}";
+            ProductDTO productDTO = mapper.readValue(JSON, ProductDTO.class);
+
+            System.out.println(productDTO);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
