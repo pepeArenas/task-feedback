@@ -31,7 +31,7 @@ public class ProductCoreServiceImpl implements ProductService {
     }
 
     @RabbitListener(queues = "q.management.get")
-    public List<ProductDTO> receiverForAllProductsRPC(ProductDTO product) {
+    public List<ProductDTO> receiverForAllProductsRPC(String message) {
         List<ProductDTO> products = getProducts();
         logger.debug("Products returned form DB {}", products);
         return products;
@@ -48,10 +48,9 @@ public class ProductCoreServiceImpl implements ProductService {
     }
 
     @RabbitListener(queues = "q.management.insert")
-    public ProductDTO reciverRPC(ProductDTO product) {
+    public ProductDTO receiverRPC(ProductDTO product) {
         logger.info("Received message from RabbitMQ: {}", product.toString());
-        ProductDTO productSaved = insertProduct(product);
-        return productSaved;
+        return insertProduct(product);
     }
 
     @Override
