@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
 
         logger.debug(message);
 
-        return product;
+        return message;
 
     }
 }

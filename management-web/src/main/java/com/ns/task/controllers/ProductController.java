@@ -4,6 +4,7 @@ import com.ns.task.model.ProductDTO;
 import com.ns.task.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,11 +32,17 @@ public class ProductController {
     }
 
     @PostMapping("/product")
-    public String saveProduct(@ModelAttribute("product") @Valid ProductDTO product, BindingResult result) {
+    public String saveProduct(@ModelAttribute("product") @Valid ProductDTO product, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "addProduct";
         }
-        productService.insertProduct(product);
+        ProductDTO productDTO = productService.insertProduct(product);
+        if (productDTO.getMessage() != null) {
+            model.addAttribute("messageException", productDTO.getMessage());
+            return "managementError";
+        }
+        model.addAttribute("name", productDTO.getName());
+        model.addAttribute("model", productDTO.getModel());
         return "productAdded";
     }
 
