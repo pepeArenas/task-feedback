@@ -57,21 +57,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
+        ProductDTO message = (ProductDTO) rabbitTemplate.convertSendAndReceive(RabbitConfig.EXCHANGE,
+                RabbitConfig.ROUTING_KEY,
+                product);
 
-        try {
-            String productAsJSON = mapper.writeValueAsString(product);
-            Object message = rabbitTemplate.convertSendAndReceive(RabbitConfig.EXCHANGE,
-                    RabbitConfig.ROUTING_KEY,
-                    productAsJSON);
-            String messageAsString = new String((byte[]) message);
-            logger.debug("Message recived from RabbitMQ {}", messageAsString);
-            ProductDTO productDTO = mapper.readValue(messageAsString, ProductDTO.class);
-            logger.debug("After convert JSON-POJO {}", productDTO);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        logger.debug(message);
 
         return product;
 

@@ -1,6 +1,5 @@
 package com.ns.task.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ns.task.entities.ProductEntity;
 import com.ns.task.exceptions.ProductManagementException;
 import com.ns.task.model.ProductDTO;
@@ -9,27 +8,19 @@ import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductCoreServiceImpl implements ProductService {
-
-
     private ModelMapper mapper;
     private ProductRepository repository;
     private static final Logger logger = LogManager.getLogger();
-    private AmqpTemplate amqpTemplate;
-    private ObjectMapper objectMapper = new ObjectMapper();
-
 
     public ProductCoreServiceImpl() {
     }
@@ -40,8 +31,8 @@ public class ProductCoreServiceImpl implements ProductService {
         this.repository = repository;
     }
 
-    @RabbitListener(queues = "q.management.get", containerFactory = "jsaFactory")
-    public List<ProductDTO> reciverForAllProductsRPC(Message message) {
+    @RabbitListener(queues = "q.management.get")
+    public List<ProductDTO> receiverForAllProductsRPC(ProductDTO product) {
         List<ProductDTO> products = getProducts();
         logger.debug("Products returned form DB {}", products);
         return products;
@@ -57,23 +48,11 @@ public class ProductCoreServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
-    @RabbitListener(queues = "q.management.insert", containerFactory = "jsaFactory")
-    public String reciverRPC(Message message) {
-        byte[] body = message.getBody();
-        String messageBody = new String(body);
-        ProductDTO product = new ProductDTO();
-        String JSON = "";
-        logger.debug("Reading data to RabbitMQ {}", messageBody);
-        try {
-            product = objectMapper.readValue(messageBody, ProductDTO.class);
-            logger.debug("Sending data converted from message to save ProductDTO {}", product);
-            product = insertProduct(product);
-            JSON = objectMapper.writeValueAsString(product);
-            logger.debug("JSON {}", JSON);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return JSON;
+    @RabbitListener(queues = "q.management.insert")
+    public ProductDTO reciverRPC(ProductDTO product) {
+        logger.info("Received message from RabbitMQ: {}", product.toString());
+        ProductDTO productSaved = insertProduct(product);
+        return productSaved;
     }
 
     @Override
