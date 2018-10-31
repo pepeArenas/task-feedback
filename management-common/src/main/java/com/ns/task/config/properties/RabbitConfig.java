@@ -2,6 +2,8 @@ package com.ns.task.config.properties;
 
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -59,4 +61,13 @@ public class RabbitConfig {
                 autoDelete().
                 build();
     }
+
+    @Bean
+    ConnectionFactory connectionFactory() {
+        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(RabbitConfig.HOSTNAME, RabbitConfig.PORT);
+        cachingConnectionFactory.setUsername(RabbitConfig.USERNAME);
+        cachingConnectionFactory.setPassword(RabbitConfig.PASSWORD);
+        return cachingConnectionFactory;
+    }
+
 }

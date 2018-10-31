@@ -1,9 +1,7 @@
 package com.ns.task.config;
 
 
-import com.ns.task.config.properties.RabbitConfig;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.exception.ListenerExecutionFailedException;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -14,13 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ConsumerConfig {
-    @Bean
-    ConnectionFactory connectionFactory() {
-        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(RabbitConfig.HOSTNAME, RabbitConfig.PORT);
-        cachingConnectionFactory.setUsername(RabbitConfig.USERNAME);
-        cachingConnectionFactory.setPassword(RabbitConfig.PASSWORD);
-        return cachingConnectionFactory;
-    }
+
 
     @Bean
     public MessageConverter jsonMessageConverter() {
