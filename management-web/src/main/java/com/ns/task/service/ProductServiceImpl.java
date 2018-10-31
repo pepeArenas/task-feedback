@@ -2,7 +2,7 @@ package com.ns.task.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ns.task.config.ProducerConfig;
+import com.ns.task.config.properties.RabbitConfig;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
@@ -38,8 +38,8 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> getProducts() {
         try {
             String productAsJSON = mapper.writeValueAsString("getAllProducts");
-            Object message = rabbitTemplate.convertSendAndReceive(ProducerConfig.EXCHANGE_GET,
-                    ProducerConfig.ROUTING_KEY_GET,
+            Object message = rabbitTemplate.convertSendAndReceive(RabbitConfig.EXCHANGE_GET,
+                    RabbitConfig.ROUTING_KEY_GET,
                     productAsJSON);
             String messageAsString = new String((byte[]) message);
             logger.debug("Message recived from RabbitMQ {}", messageAsString);
@@ -60,8 +60,8 @@ public class ProductServiceImpl implements ProductService {
 
         try {
             String productAsJSON = mapper.writeValueAsString(product);
-            Object message = rabbitTemplate.convertSendAndReceive(ProducerConfig.EXCHANGE,
-                    ProducerConfig.ROUTING_KEY,
+            Object message = rabbitTemplate.convertSendAndReceive(RabbitConfig.EXCHANGE,
+                    RabbitConfig.ROUTING_KEY,
                     productAsJSON);
             String messageAsString = new String((byte[]) message);
             logger.debug("Message recived from RabbitMQ {}", messageAsString);
