@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,7 +31,6 @@ public class ProductControllerTest {
     @MockBean
     private ProductService service;
 
-
     @Test
     public void showAddProduct() throws Exception {
         this.mockMvc.perform(get("/product")).andDo(print()).andExpect(status().
@@ -43,7 +43,7 @@ public class ProductControllerTest {
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("SO90");
         productDTO.setPrice(new BigDecimal("12.90"));
-        when(service.insertProduct(new ProductDTO())).thenReturn(productDTO);
+        when(service.insertProduct(isA(ProductDTO.class))).thenReturn(productDTO);
         this.mockMvc.perform(post("/product")
                 .param("name", "SCREWDRIVER")
                 .param("model", "S019")
@@ -51,6 +51,23 @@ public class ProductControllerTest {
                 andDo(print()).
                 andExpect(status().isOk()).
                 andExpect(view().name("productAdded"));
+    }
+
+    @Test
+    public void respondWithErrorPageWhenTryingSave() throws Exception {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setName("SCREWDRIVER");
+        productDTO.setModel("SO90");
+        productDTO.setPrice(new BigDecimal("12.90"));
+        productDTO.setMessage("Name and model already exists");
+        when(service.insertProduct(isA(ProductDTO.class))).thenReturn(productDTO);
+        this.mockMvc.perform(post("/product")
+                .param("name", "SCREWDRIVER")
+                .param("model", "S019")
+                .param("price", String.valueOf(new BigDecimal("12.3").toString()))).
+                andDo(print()).
+                andExpect(status().isOk()).
+                andExpect(view().name("managementError"));
     }
 
     @Test
