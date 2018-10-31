@@ -37,12 +37,14 @@ public class ProductController {
             return "addProduct";
         }
         ProductDTO productDTO = productService.insertProduct(product);
-        if (productDTO.getMessage() != null) {
+        if (productDTO != null && productDTO.getMessage() != null) {
             model.addAttribute("messageException", productDTO.getMessage());
             return "managementError";
         }
-        model.addAttribute("name", productDTO.getName());
-        model.addAttribute("model", productDTO.getModel());
+        if (productDTO != null) {
+            model.addAttribute("name", productDTO.getName());
+            model.addAttribute("model", productDTO.getModel());
+        }
         return "productAdded";
     }
 

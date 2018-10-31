@@ -37,10 +37,13 @@ public class ProductControllerTest {
                 isOk()).andExpect(view().name("addProduct"));
     }
 
-    /*@Test
+    @Test
     public void saveProduct() throws Exception {
-
-        when(service.insertProduct(new ProductDTO())).thenReturn(product).thenAnswer(new ProductDTO());
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setName("SCREWDRIVER");
+        productDTO.setModel("SO90");
+        productDTO.setPrice(new BigDecimal("12.90"));
+        when(service.insertProduct(new ProductDTO())).thenReturn(productDTO);
         this.mockMvc.perform(post("/product")
                 .param("name", "SCREWDRIVER")
                 .param("model", "S019")
@@ -48,7 +51,7 @@ public class ProductControllerTest {
                 andDo(print()).
                 andExpect(status().isOk()).
                 andExpect(view().name("productAdded"));
-    }*/
+    }
 
     @Test
     public void trySaveProductWithNullValues() throws Exception {

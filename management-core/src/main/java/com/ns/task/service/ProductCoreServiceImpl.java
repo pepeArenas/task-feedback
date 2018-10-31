@@ -59,11 +59,9 @@ public class ProductCoreServiceImpl implements ProductService {
         try {
             logger.debug("Sending data to DB {}", productEntity);
             productEntity = repository.saveProduct(productEntity);
-            product.setComplete(false);
             product.setMessage("Name and model of the service exists already");
             logger.debug("Getting persisted data from insert to DB {}", productEntity);
         } catch (DataIntegrityViolationException exception) {
-            product.setComplete(false);
             product.setMessage("Name and model already exists");
             return product;
         }

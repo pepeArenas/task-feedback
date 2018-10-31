@@ -80,15 +80,18 @@ public class ProductCoreServiceImpTest {
         assertProduct(returned, productEntity);
     }
 
-    /*@Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowAnExceptionWhenInsertDuplicateProduct() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("S090");
         productDTO.setPrice(new BigDecimal("12.20"));
+        productDTO.setMessage("Name and model already exists");
         when(repository.saveProduct(any(ProductEntity.class))).thenThrow(DataIntegrityViolationException.class);
-        productService.insertProduct(productDTO);
-    }*/
+        ProductDTO product = productService.insertProduct(productDTO);
+        assertEquals(product.getMessage(), productDTO.getMessage());
+
+    }
 
     @Test
     public void whenConvertPostEntityToPostDto_thenCorrect() {
