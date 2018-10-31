@@ -16,7 +16,6 @@ import javax.validation.Valid;
 @Controller
 public class ProductController {
 
-
     private final ProductService productService;
 
     @Autowired
@@ -26,9 +25,17 @@ public class ProductController {
 
     @GetMapping("/product")
     public String showAddProduct(ModelMap model) {
+        model.addAttribute("active", "active");
         model.put("product", new ProductDTO());
-
+        model.put("activeAdd", "active");
         return "addProduct";
+    }
+
+    @GetMapping("/products")
+    public String showProducts(ModelMap model) {
+        model.put("products", productService.getProducts());
+        model.put("activeGet", "active");
+        return "products";
     }
 
     @PostMapping("/product")
@@ -46,12 +53,4 @@ public class ProductController {
 
         return "productAdded";
     }
-
-    @GetMapping("/products")
-    public String showProducts(ModelMap model) {
-        model.put("products", productService.getProducts());
-        return "products";
-    }
-
-
 }
