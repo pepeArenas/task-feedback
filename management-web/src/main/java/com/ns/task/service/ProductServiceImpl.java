@@ -1,6 +1,6 @@
 package com.ns.task.service;
 
-import com.ns.task.config.properties.RabbitConfig;
+import com.ns.task.config.properties.RabbitProperties;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
@@ -16,23 +16,25 @@ public class ProductServiceImpl implements ProductService {
 
     private static final Logger logger = LogManager.getLogger();
     private final RabbitTemplate rabbitTemplate;
+    private RabbitProperties properties;
 
     @Autowired
-    public ProductServiceImpl(RabbitTemplate rabbitTemplate) {
+    public ProductServiceImpl(RabbitTemplate rabbitTemplate, RabbitProperties properties) {
         this.rabbitTemplate = rabbitTemplate;
+        this.properties = properties;
     }
 
     @Override
     public List<ProductDTO> getProducts() {
-        return (List<ProductDTO>) rabbitTemplate.convertSendAndReceive(RabbitConfig.EXCHANGE_GET,
-                RabbitConfig.ROUTING_KEY_GET,
+        return (List<ProductDTO>) rabbitTemplate.convertSendAndReceive(properties.getExchangesRetrieve(),
+                properties.getRoutingKeyRetrieve(),
                 "getAllProducts");
     }
 
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
-        ProductDTO productDTO = (ProductDTO) rabbitTemplate.convertSendAndReceive(RabbitConfig.EXCHANGE,
-                RabbitConfig.ROUTING_KEY,
+        ProductDTO productDTO = (ProductDTO) rabbitTemplate.convertSendAndReceive(properties.getExchangesInsertion(),
+                properties.getRoutingKeyInsertion(),
                 product);
 
         logger.debug(productDTO);

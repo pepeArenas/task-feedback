@@ -16,13 +16,13 @@ import org.springframework.messaging.handler.annotation.support.DefaultMessageHa
 
 @Configuration
 public class RabbitConfig implements RabbitListenerConfigurer {
-    @Autowired
+
     private RabbitProperties properties;
 
-    public static final String EXCHANGE = "x.management";
-    public static final String ROUTING_KEY = "management";
-    public static final String EXCHANGE_GET = "x.management.get";
-    public static final String ROUTING_KEY_GET = "management.get";
+    @Autowired
+    public RabbitConfig(RabbitProperties properties) {
+        this.properties = properties;
+    }
 
     @Bean
     Exchange getExchange() {
