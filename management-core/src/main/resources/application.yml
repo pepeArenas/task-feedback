@@ -21,3 +21,15 @@ logging:
         SQL: debug
       springframework:
         web: debug
+configuration:
+  rabbitmq:
+    exchangesInsertion: x.management
+    routing-key-insertion: management
+    queue-insertion: q.management.insert
+    exchanges-retrieve: x.management.get
+    routing-key-retrieve: management.get
+    queue-retrieve: q.management.get
+    hostname: localhost
+    port: 5672
+    username: admin
+    password: admin

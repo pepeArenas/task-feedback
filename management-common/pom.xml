@@ -11,4 +11,5 @@
     <name>management-common</name>
     <artifactId>management-common</artifactId>
     <url>http://maven.apache.org</url>
+<packaging>jar</packaging>
 </project>
