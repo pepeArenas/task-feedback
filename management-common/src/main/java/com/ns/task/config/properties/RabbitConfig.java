@@ -26,7 +26,7 @@ public class RabbitConfig implements RabbitListenerConfigurer {
     private static final String HOSTNAME = "localhost";
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
-    private static final int PORT = 5672;
+    private static final int PORT = 5673;
 
     @Bean
     Exchange getExchange() {
