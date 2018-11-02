@@ -15,6 +15,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private static final Logger logger = LogManager.getLogger();
+    private static final String GET_ALL_PRODUCTS = "getAllProducts";
     private final RabbitTemplate rabbitTemplate;
 
     @Autowired
@@ -26,7 +27,7 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> getProducts() {
         return (List<ProductDTO>) rabbitTemplate.convertSendAndReceive(RabbitConfig.EXCHANGE_GET,
                 RabbitConfig.ROUTING_KEY_GET,
-                "getAllProducts");
+                GET_ALL_PRODUCTS);
     }
 
     @Override

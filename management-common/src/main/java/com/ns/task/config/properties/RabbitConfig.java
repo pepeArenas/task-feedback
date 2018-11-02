@@ -19,10 +19,10 @@ import org.springframework.messaging.handler.annotation.support.DefaultMessageHa
 public class RabbitConfig implements RabbitListenerConfigurer {
     public static final String EXCHANGE = "x.management";
     public static final String ROUTING_KEY = "management";
-    private static final String QUEUE = "q.management.insert";
+    public static final String QUEUE = "q.management.insert";
     public static final String EXCHANGE_GET = "x.management.get";
     public static final String ROUTING_KEY_GET = "management.get";
-    private static final String QUEUE_GET = "q.management.get";
+    public static final String QUEUE_GET = "q.management.get";
     private static final String HOSTNAME = "localhost";
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "admin";
