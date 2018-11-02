@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: management-core
+  cloud:
+    config:
+      uri: http://localhost:8888

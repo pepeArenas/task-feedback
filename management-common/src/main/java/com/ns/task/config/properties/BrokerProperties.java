@@ -2,8 +2,8 @@ package com.ns.task.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "configuration.rabbitmq")
-public class RabbitProperties {
+@ConfigurationProperties(prefix = "configuration.broker")
+public class BrokerProperties {
     private String exchangesInsertion;
     private String routingKeyInsertion;
     private String queueInsertion;

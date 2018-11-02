@@ -15,12 +15,12 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 
 @Configuration
-@EnableConfigurationProperties(RabbitProperties.class)
-public class RabbitConfig implements RabbitListenerConfigurer {
+@EnableConfigurationProperties(BrokerProperties.class)
+public class BrokerConfig implements RabbitListenerConfigurer {
 
-    private RabbitProperties properties;
+    private BrokerProperties properties;
 
-    public RabbitConfig(RabbitProperties properties) {
+    public BrokerConfig(BrokerProperties properties) {
         this.properties = properties;
     }
 

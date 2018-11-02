@@ -1,6 +1,6 @@
 package com.ns.task.service;
 
-import com.ns.task.config.properties.RabbitProperties;
+import com.ns.task.config.properties.BrokerProperties;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
@@ -16,10 +16,10 @@ public class ProductServiceImpl implements ProductService {
 
     private static final Logger logger = LogManager.getLogger();
     private final RabbitTemplate rabbitTemplate;
-    private RabbitProperties properties;
+    private BrokerProperties properties;
 
     @Autowired
-    public ProductServiceImpl(RabbitTemplate rabbitTemplate, RabbitProperties properties) {
+    public ProductServiceImpl(RabbitTemplate rabbitTemplate, BrokerProperties properties) {
         this.rabbitTemplate = rabbitTemplate;
         this.properties = properties;
     }
