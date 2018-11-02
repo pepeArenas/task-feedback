@@ -1,5 +1,6 @@
 package com.ns.task;
 
+import com.ns.task.config.properties.CommonProperties;
 import com.ns.task.controllers.ProductController;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.services.ProductService;
@@ -59,7 +60,7 @@ public class ProductControllerTest {
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("SO90");
         productDTO.setPrice(new BigDecimal("12.90"));
-        productDTO.setMessage("Name and model already exists");
+        productDTO.setMessage(CommonProperties.DUPLICATE_PRODUCT);
         when(service.insertProduct(isA(ProductDTO.class))).thenReturn(productDTO);
         this.mockMvc.perform(post("/product")
                 .param("name", "SCREWDRIVER")

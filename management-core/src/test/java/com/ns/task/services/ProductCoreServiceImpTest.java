@@ -1,6 +1,7 @@
 package com.ns.task.services;
 
 
+import com.ns.task.config.properties.CommonProperties;
 import com.ns.task.entities.ProductEntity;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.repositories.ProductRepository;
@@ -86,10 +87,9 @@ public class ProductCoreServiceImpTest {
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("S090");
         productDTO.setPrice(new BigDecimal("12.20"));
-        productDTO.setMessage("Name and model already exists");
         when(repository.saveProduct(any(ProductEntity.class))).thenThrow(DataIntegrityViolationException.class);
         ProductDTO product = productService.insertProduct(productDTO);
-        assertEquals(product.getMessage(), productDTO.getMessage());
+        assertEquals(CommonProperties.DUPLICATE_PRODUCT, product.getMessage());
 
     }
 
