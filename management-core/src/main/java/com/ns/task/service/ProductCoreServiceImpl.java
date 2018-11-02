@@ -19,21 +19,20 @@ import java.util.stream.Collectors;
 public class ProductCoreServiceImpl implements ProductService {
     private ModelMapper mapper;
     private ProductRepository repository;
-    private static final Logger logger = LogManager.getLogger();
-
-    public ProductCoreServiceImpl() {
-    }
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired
-    public ProductCoreServiceImpl(ModelMapper mapper, ProductRepository repository) {
+    public ProductCoreServiceImpl(
+            ModelMapper mapper,
+            ProductRepository repository) {
         this.mapper = mapper;
         this.repository = repository;
     }
 
-    @RabbitListener(queues = "q.management.get")
+    @RabbitListener(queues =  "q.management.get")
     public List<ProductDTO> receiverForAllProductsRPC(String message) {
         List<ProductDTO> products = getProducts();
-        logger.debug("Products returned form DB {}", products);
+        LOGGER.debug("Products returned form DB {}", products);
         return products;
     }
 
@@ -41,7 +40,7 @@ public class ProductCoreServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> getProducts() {
         List<ProductEntity> products = repository.retrieveProducts();
-        logger.debug("Number of returned products from DB {}", products.size());
+        LOGGER.debug("Number of returned products from DB {}", products.size());
         return products.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -49,7 +48,7 @@ public class ProductCoreServiceImpl implements ProductService {
 
     @RabbitListener(queues = "q.management.insert")
     public ProductDTO receiverRPC(ProductDTO product) {
-        logger.info("Received message from RabbitMQ: {}", product.toString());
+        LOGGER.info("Received message from RabbitMQ: {}", product.toString());
         return insertProduct(product);
     }
 
@@ -57,10 +56,10 @@ public class ProductCoreServiceImpl implements ProductService {
     public ProductDTO insertProduct(ProductDTO product) {
         ProductEntity productEntity = convertToEntity(product);
         try {
-            logger.debug("Sending data to DB {}", productEntity);
+            LOGGER.debug("Sending data to DB {}", productEntity);
             productEntity = repository.saveProduct(productEntity);
             product.setMessage("Name and model of the service exists already");
-            logger.debug("Getting persisted data from insert to DB {}", productEntity);
+            LOGGER.debug("Getting persisted data from insert to DB {}", productEntity);
         } catch (DataIntegrityViolationException exception) {
             product.setMessage("Name and model already exists");
             return product;
