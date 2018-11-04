@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableConfigurationProperties(DatabaseProperties.class)
 public class DatabaseConfig {
-    private DatabaseProperties properties;
+    private final DatabaseProperties properties;
 
     public DatabaseConfig(DatabaseProperties properties) {
         this.properties = properties;

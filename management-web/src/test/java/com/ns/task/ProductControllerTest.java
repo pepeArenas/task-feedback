@@ -2,6 +2,7 @@ package com.ns.task;
 
 import com.ns.task.controllers.ProductController;
 import com.ns.task.model.ProductDTO;
+import com.ns.task.model.ProductDTOBuilder;
 import com.ns.task.services.ProductService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +40,7 @@ public class ProductControllerTest {
 
     @Test
     public void saveProduct() throws Exception {
-        ProductDTO productDTO = new ProductDTO();
+        final ProductDTO productDTO = new ProductDTOBuilder().createProductDTO();
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("SO90");
         productDTO.setPrice(new BigDecimal("12.90"));
@@ -55,7 +56,7 @@ public class ProductControllerTest {
 
     @Test
     public void respondWithErrorPageWhenTryingSave() throws Exception {
-        ProductDTO productDTO = new ProductDTO();
+        final ProductDTO productDTO = new ProductDTOBuilder().createProductDTO();
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("SO90");
         productDTO.setPrice(new BigDecimal("12.90"));
@@ -72,15 +73,17 @@ public class ProductControllerTest {
 
     @Test
     public void trySaveProductWithNullValues() throws Exception {
-        when(service.insertProduct(new ProductDTO())).thenReturn(new ProductDTO());
-        this.mockMvc.perform(post("/product")).
-                andDo(print()).
-                andExpect(status().isOk()).
-                andExpect(view().name("addProduct"));
+        when(service.insertProduct(isA(ProductDTO.class))).thenReturn(new ProductDTOBuilder().createProductDTO());
+        this.mockMvc.perform(post("/product"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(model().errorCount(3))
+                .andExpect(view().name("addProduct"));
     }
 
     @Test
     public void trySaveProductWithSizeErrors() throws Exception {
+        when(service.insertProduct(isA(ProductDTO.class))).thenReturn(new ProductDTOBuilder().createProductDTO());
         mockMvc.perform(post("/product")
                 .param("name", "")
                 .param("model", "a")

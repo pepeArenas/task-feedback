@@ -32,7 +32,7 @@ public class ProductCoreServiceImpl implements ProductService {
 
     @RabbitListener(queues = "q.management.get")
     public List<ProductDTO> receiverForAllProductsRPC(String message) {
-        List<ProductDTO> products = getProducts();
+        final List<ProductDTO> products = getProducts();
         logger.debug("Products returned form DB {}", products);
         return products;
     }
@@ -40,7 +40,7 @@ public class ProductCoreServiceImpl implements ProductService {
 
     @Override
     public List<ProductDTO> getProducts() {
-        List<ProductEntity> products = repository.retrieveProducts();
+        final List<ProductEntity> products = repository.retrieveProducts();
         logger.debug("Number of returned products from DB {}", products.size());
         return products.stream()
                 .map(this::convertToDto)

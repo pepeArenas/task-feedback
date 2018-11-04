@@ -1,6 +1,7 @@
 package com.ns.task.controllers;
 
 import com.ns.task.model.ProductDTO;
+import com.ns.task.model.ProductDTOBuilder;
 import com.ns.task.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,7 @@ public class ProductController {
     @GetMapping("/product")
     public String showAddProduct(ModelMap model) {
         model.addAttribute("active", "active");
-        model.put("product", new ProductDTO());
+        model.put("product", new ProductDTOBuilder().createProductDTO());
         model.put("activeAdd", "active");
         return "addProduct";
     }
@@ -40,17 +41,18 @@ public class ProductController {
 
     @PostMapping("/product")
     public String saveProduct(@ModelAttribute("product") @Valid ProductDTO product, BindingResult result, Model model) {
+        String view = "productAdded";
         if (result.hasErrors()) {
-            return "addProduct";
+            view = "addProduct";
         }
-        ProductDTO productDTO = productService.insertProduct(product);
+        final ProductDTO productDTO = productService.insertProduct(product);
         if (productDTO.getMessage() != null) {
             model.addAttribute("messageException", productDTO.getMessage());
-            return "managementError";
+            view = "managementError";
         }
         model.addAttribute("name", productDTO.getName());
         model.addAttribute("model", productDTO.getModel());
 
-        return "productAdded";
+        return view;
     }
 }

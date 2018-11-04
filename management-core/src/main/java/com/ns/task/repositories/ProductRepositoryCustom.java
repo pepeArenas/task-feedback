@@ -6,7 +6,7 @@ import com.ns.task.exceptions.ProductManagementException;
 import java.util.List;
 
 public interface ProductRepositoryCustom {
-    List<ProductEntity> retrieveProducts();
+    List retrieveProducts();
 
     ProductEntity saveProduct(ProductEntity product) throws ProductManagementException;
 }

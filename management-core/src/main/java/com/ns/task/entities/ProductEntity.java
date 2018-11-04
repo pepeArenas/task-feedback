@@ -31,9 +31,6 @@ public class ProductEntity {
     @Digits(integer = 5, fraction = 2, message = CommonProperties.INVALID_PRICE_FORMAT)
     private BigDecimal price;
 
-    public ProductEntity() {
-    }
-
     public Integer getId() {
         return id;
     }

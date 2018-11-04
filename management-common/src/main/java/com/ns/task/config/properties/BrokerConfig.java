@@ -18,7 +18,7 @@ import org.springframework.messaging.handler.annotation.support.DefaultMessageHa
 @EnableConfigurationProperties(BrokerProperties.class)
 public class BrokerConfig implements RabbitListenerConfigurer {
 
-    private BrokerProperties properties;
+    private final BrokerProperties properties;
 
     public BrokerConfig(BrokerProperties properties) {
         this.properties = properties;
@@ -68,7 +68,7 @@ public class BrokerConfig implements RabbitListenerConfigurer {
 
     @Bean
     ConnectionFactory connectionFactory() {
-        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(
+        final CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(
                 properties.getHostname(),
                 properties.getPort());
         cachingConnectionFactory.setUsername(properties.getUsername());
@@ -78,7 +78,7 @@ public class BrokerConfig implements RabbitListenerConfigurer {
 
     @Bean
     public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(producerJackson2MessageConverter());
         return rabbitTemplate;
     }
@@ -95,7 +95,7 @@ public class BrokerConfig implements RabbitListenerConfigurer {
 
     @Bean
     public DefaultMessageHandlerMethodFactory messageHandlerMethodFactory() {
-        DefaultMessageHandlerMethodFactory factory = new DefaultMessageHandlerMethodFactory();
+        final DefaultMessageHandlerMethodFactory factory = new DefaultMessageHandlerMethodFactory();
         factory.setMessageConverter(consumerJackson2MessageConverter());
         return factory;
     }

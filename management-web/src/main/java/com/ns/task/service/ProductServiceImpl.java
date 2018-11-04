@@ -16,7 +16,7 @@ public class ProductServiceImpl implements ProductService {
 
     private static final Logger logger = LogManager.getLogger();
     private final RabbitTemplate rabbitTemplate;
-    private BrokerProperties properties;
+    private final BrokerProperties properties;
 
     @Autowired
     public ProductServiceImpl(RabbitTemplate rabbitTemplate, BrokerProperties properties) {
@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
-        ProductDTO productDTO = (ProductDTO) rabbitTemplate.convertSendAndReceive(properties.getExchangesInsertion(),
+        final ProductDTO productDTO = (ProductDTO) rabbitTemplate.convertSendAndReceive(properties.getExchangesInsertion(),
                 properties.getRoutingKeyInsertion(),
                 product);
 
