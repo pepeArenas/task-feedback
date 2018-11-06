@@ -11,21 +11,24 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 
 @Configuration
-@EnableConfigurationProperties(BrokerProperties.class)
-public class BrokerConfig implements RabbitListenerConfigurer {
+@EnableConfigurationProperties(RabbitMQProperties.class)
+@Profile("rabbitMQ")
+public class RabbitMQConfiguration implements RabbitListenerConfigurer, BrokerConfiguration {
 
-    private final BrokerProperties properties;
+    private final RabbitMQProperties properties;
 
-    public BrokerConfig(BrokerProperties properties) {
+    public RabbitMQConfiguration(RabbitMQProperties properties) {
         this.properties = properties;
     }
 
     @Bean
     Exchange getExchange() {
+        System.err.println("%%%%%%%%%%%%RABBIT CONFIGURATION%%%%%%%%%%%%%");
         return ExchangeBuilder.directExchange(properties.getExchangesInsertion()).
                 build();
     }
@@ -104,5 +107,4 @@ public class BrokerConfig implements RabbitListenerConfigurer {
     public void configureRabbitListeners(final RabbitListenerEndpointRegistrar registrar) {
         registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
     }
-
 }

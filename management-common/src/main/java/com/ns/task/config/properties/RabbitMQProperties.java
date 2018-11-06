@@ -3,7 +3,7 @@ package com.ns.task.config.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "configuration.broker")
-public class BrokerProperties {
+public class RabbitMQProperties implements BrokerProperties {
     private String exchangesInsertion;
     private String routingKeyInsertion;
     private String queueInsertion;

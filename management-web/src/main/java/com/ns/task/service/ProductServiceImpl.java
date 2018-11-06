@@ -1,25 +1,27 @@
 package com.ns.task.service;
 
-import com.ns.task.config.properties.BrokerProperties;
+import com.ns.task.config.properties.RabbitMQProperties;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Profile("rabbitMQ")
 public class ProductServiceImpl implements ProductService {
 
     private static final Logger logger = LogManager.getLogger();
     private final RabbitTemplate rabbitTemplate;
-    private final BrokerProperties properties;
+    private final RabbitMQProperties properties;
 
     @Autowired
-    public ProductServiceImpl(RabbitTemplate rabbitTemplate, BrokerProperties properties) {
+    public ProductServiceImpl(RabbitTemplate rabbitTemplate, RabbitMQProperties properties) {
         this.rabbitTemplate = rabbitTemplate;
         this.properties = properties;
     }

@@ -31,3 +31,9 @@ docker-compose up --build -d
 
 In order to start the application, first start management-cloud in order to other modules pick up the configuration 
 on start
+
+In order to start kafka with Docker we must define a environment variable as follows
+export DOCKER_KAFKA_HOST=$(ipconfig getifaddr en0)
+
+For more information(https://github.com/wurstmeister/kafka-docker/issues/169)
+
