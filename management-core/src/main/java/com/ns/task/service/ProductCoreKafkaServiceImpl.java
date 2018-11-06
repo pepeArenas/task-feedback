@@ -7,33 +7,34 @@ import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Profile("rabbitMQ")
-public class ProductCoreServiceImpl implements ProductService {
+@Profile("kafka")
+public class ProductCoreKafkaServiceImpl implements ProductService {
+    private static final Logger logger = LogManager.getLogger();
     private ModelMapper mapper;
     private ProductRepository repository;
-    private static final Logger logger = LogManager.getLogger();
 
-    public ProductCoreServiceImpl() {
+    @Autowired
+    public void setMapper(ModelMapper mapper) {
+        this.mapper = mapper;
     }
 
     @Autowired
-    public ProductCoreServiceImpl(ModelMapper mapper, ProductRepository repository) {
-        this.mapper = mapper;
+    public void setRepository(ProductRepository repository) {
         this.repository = repository;
     }
 
-    @RabbitListener(queues = "q.management.get")
-    public List<ProductDTO> receiverForAllProductsRPC(String message) {
+    @KafkaListener(topics = "t.get", containerFactory = "kafkaListenerContainerFactory")
+    public List<ProductDTO> receiverForAllProductsRPC(ProductDTO message) {
         final List<ProductDTO> products = getProducts();
         logger.debug("Products returned form DB {}", products);
         return products;
@@ -49,9 +50,9 @@ public class ProductCoreServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
-    @RabbitListener(queues = "q.management.insert")
+    @KafkaListener(topics = "t.insert", containerFactory = "kafkaListenerContainerFactory")
     public ProductDTO receiverRPC(ProductDTO product) {
-        logger.info("Received message from RabbitMQ: {}", product.toString());
+        logger.info("Received message from Kafka: {}", product.toString());
         return insertProduct(product);
     }
 
@@ -77,5 +78,4 @@ public class ProductCoreServiceImpl implements ProductService {
     private ProductEntity convertToEntity(ProductDTO dto) {
         return mapper.map(dto, ProductEntity.class);
     }
-
 }
