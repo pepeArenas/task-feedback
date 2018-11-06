@@ -33,7 +33,7 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
         this.repository = repository;
     }
 
-    @KafkaListener(topics = "t.get", containerFactory = "kafkaListenerContainerFactoryList")
+    @KafkaListener(topics = "t.get", containerFactory = "kafkaListenerContainerFactory")
     public List<ProductDTO> receiverForAllProductsRPC(ProductDTO message) {
         final List<ProductDTO> products = getProducts();
         logger.debug("Products returned form DB {}", products);

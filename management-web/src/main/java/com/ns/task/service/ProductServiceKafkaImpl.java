@@ -19,35 +19,26 @@ import java.util.List;
 public class ProductServiceKafkaImpl implements ProductService {
     private static final Logger logger = LogManager.getLogger();
     private KafkaTemplate<String, ProductDTO> kafkaTemplate;
-    private KafkaTemplate<String, ProductDTO[]> getProducts;
 
     @Autowired
     public void setKafkaTemplate(KafkaTemplate<String, ProductDTO> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @Autowired
-    public void setGetProducts(KafkaTemplate<String, ProductDTO[]> getProducts) {
-        this.getProducts = getProducts;
-    }
-
     @Override
     public List<ProductDTO> getProducts() {
         logger.debug("Sending to kafka broker:");
-        ListenableFuture<SendResult<String, ProductDTO[]>> products = getProducts.send("t.get",
-                new ProductDTO[]{new ProductDTO()});
-        products.addCallback(new ListenableFutureCallback<SendResult<String, ProductDTO[]>>() {
+        ListenableFuture<SendResult<String, ProductDTO>> products = kafkaTemplate.send("t.get",
+                new ProductDTO());
+        products.addCallback(new ListenableFutureCallback<SendResult<String, ProductDTO>>() {
             @Override
             public void onFailure(Throwable throwable) {
 
             }
 
             @Override
-            public void onSuccess(SendResult<String, ProductDTO[]> result) {
-                for (ProductDTO product : result.getProducerRecord().value()) {
-                    System.err.println(result.getProducerRecord().value().length);
-                    System.err.println(product);
-                }
+            public void onSuccess(SendResult<String, ProductDTO> result) {
+
                 System.err.println(result.getProducerRecord().value());
 
             }
