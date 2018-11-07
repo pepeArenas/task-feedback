@@ -28,14 +28,7 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     private ModelMapper mapper;
     private ProductRepository repository;
     private KafkaTemplate<String, ProductDTO[]> kafkaTemplate;
-    private KafkaTemplate<String, ProductDTO> productTemplate;
-    private static final String RESPONSE_PRODUCTS_TOPIC = "t.products";
-    private static final String RESPONSE_PRODUCT_TOPIC = "t.product";
-
-    @Autowired
-    public void setProductTemplate(KafkaTemplate<String, ProductDTO> productTemplate) {
-        this.productTemplate = productTemplate;
-    }
+    private static final String RESPONSE_TOPIC = "t.resultado";
 
     @Autowired
     public void setKafkaTemplate(KafkaTemplate<String, ProductDTO[]> kafkaTemplate) {
@@ -57,8 +50,10 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
         final List<ProductDTO> products = getProducts();
         LOGGER.debug("Products returned form DB {}", products);
         ProductDTO[] productsAsArray = new ProductDTO[products.size()];
-
-        final ListenableFuture<SendResult<String, ProductDTO[]>> future = kafkaTemplate.send(RESPONSE_PRODUCTS_TOPIC, productsAsArray);
+        for (int i = 0; i < products.size(); i++) {
+            productsAsArray[i] = products.get(i);
+        }
+        final ListenableFuture<SendResult<String, ProductDTO[]>> future = kafkaTemplate.send(RESPONSE_TOPIC, productsAsArray);
         try {
             future.get();
         } catch (InterruptedException e) {
@@ -98,9 +93,7 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     @KafkaListener(topics = "t.insert", containerFactory = "kafkaListenerContainerFactory")
     public ProductDTO receiverRPC(ProductDTO product) {
         LOGGER.debug("Received message from Kafka: {}", product.toString());
-        ProductDTO persistedProduct = insertProduct(product);
-        productTemplate.send(RESPONSE_PRODUCT_TOPIC, persistedProduct);
-        return persistedProduct;
+        return insertProduct(product);
     }
 
     @Override
@@ -113,7 +106,6 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
         } catch (DataIntegrityViolationException exception) {
             productEntity.setMessage("Name and model already exists");
         }
-
         return convertToDto(productEntity);
     }
 

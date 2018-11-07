@@ -25,11 +25,7 @@ public class ProductServiceKafkaImpl implements ProductService {
     private KafkaTemplate<String, ProductDTO> kafkaTemplate;
     private KafkaTemplate<String, ProductDTO[]> productsTemplate;
     private List<ProductDTO> productToReturn = new ArrayList<>();
-    private ProductDTO productPersisted = new ProductDTO();
-    private static final String RESPONSE_PRODUCTS_TOPIC = "t.products";
-    private static final String RESPONSE_PRODUCT_TOPIC = "t.product";
-    private CountDownLatch latchForGet = new CountDownLatch(1);
-    private CountDownLatch latchForInsert = new CountDownLatch(1);
+    private static final String RESPONSE_TOPIC = "t.resultado";
 
     @Autowired
     public void setKafkaTemplate(KafkaTemplate<String, ProductDTO> kafkaTemplate) {
@@ -41,26 +37,25 @@ public class ProductServiceKafkaImpl implements ProductService {
         this.productsTemplate = productsTemplate;
     }
 
+    private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
     public List<ProductDTO> getProducts() {
         LOGGER.debug("Sending to kafka broker:");
-        ListenableFuture<SendResult<String, ProductDTO[]>> send = productsTemplate.send("t.get", new ProductDTO[0]);
+        final ListenableFuture<SendResult<String, ProductDTO[]>> products = productsTemplate.send("t.get",
+                new ProductDTO[0]);
         try {
-            send.get();
-            latchForGet.await();
+            latch.await();
         } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
             e.printStackTrace();
         }
         return productToReturn;
     }
 
-    @KafkaListener(topics = RESPONSE_PRODUCTS_TOPIC, containerFactory = "kafkaProductListenerContainerFactory")
+    @KafkaListener(topics = RESPONSE_TOPIC, containerFactory = "kafkaProductListenerContainerFactory")
     public ProductDTO[] readProductsFromTopic(ProductDTO[] products) {
         assignRetrieveProductsForView(products);
-        latchForGet.countDown();
+        latch.countDown();
         return products;
     }
 
@@ -72,28 +67,19 @@ public class ProductServiceKafkaImpl implements ProductService {
 
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
-        productPersisted = new ProductDTO();
-        //latchForInsert = new CountDownLatch(1);
         LOGGER.debug("Sending to kafka broker: {}", product);
-        kafkaTemplate.send("t.insert", product);
+        final ProductDTO[] productDTO = {new ProductDTO()};
+        final ListenableFuture<SendResult<String, ProductDTO>> productInserted = kafkaTemplate.send("t.insert",
+                product);
         try {
-            latchForInsert.await();
+            final SendResult<String, ProductDTO> future = productInserted.get();
+            productDTO[0] = future.getProducerRecord().value();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error("An exception has occurred while thread was sleep {}", e);
+        } catch (ExecutionException e) {
+            LOGGER.error("An exception has occurred while asynchronous task block the thread {}", e);
         }
-        latchForInsert.countDown();
-        return productPersisted;
-    }
-
-    @KafkaListener(topics = RESPONSE_PRODUCT_TOPIC, containerFactory = "kafkaListenerContainerFactory")
-    public ProductDTO readProductFromTopic(ProductDTO productPersisted) {
-        assignRetrieveProductForView(productPersisted);
-        return productPersisted;
-    }
-
-    private void assignRetrieveProductForView(ProductDTO product) {
-        LOGGER.debug("The product persisted is: {}", product);
-        productPersisted = product;
+        return productDTO[0];
 
     }
 }
