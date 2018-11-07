@@ -10,8 +10,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -28,23 +28,18 @@ public class ProductServiceKafkaImpl implements ProductService {
     @Override
     public List<ProductDTO> getProducts() {
         logger.debug("Sending to kafka broker:");
+        final ProductDTO[] productDTO = {new ProductDTO()};
         ListenableFuture<SendResult<String, ProductDTO>> products = kafkaTemplate.send("t.get",
                 new ProductDTO());
-        products.addCallback(new ListenableFutureCallback<SendResult<String, ProductDTO>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
+        try {
+            SendResult<String, ProductDTO> stringProductDTOSendResult = products.get();
+            productDTO[0] = stringProductDTOSendResult.getProducerRecord().value();
+            System.out.println(productDTO[0].getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-            }
-
-            @Override
-            public void onSuccess(SendResult<String, ProductDTO> result) {
-
-                System.err.println(result.getProducerRecord().value());
-
-            }
-        });
-
-        return null;
+        return Arrays.asList(productDTO);
     }
 
     @Override
@@ -53,20 +48,12 @@ public class ProductServiceKafkaImpl implements ProductService {
         final ProductDTO[] productDTO = {new ProductDTO()};
         ListenableFuture<SendResult<String, ProductDTO>> productInserted = kafkaTemplate.send("t.insert",
                 product);
-        productInserted.addCallback(new ListenableFutureCallback<SendResult<String, ProductDTO>>() {
-
-            @Override
-            public void onSuccess(SendResult<String, ProductDTO> result) {
-                productDTO[0] = result.getProducerRecord().value();
-            }
-
-            @Override
-            public void onFailure(Throwable ex) {
-                System.err.println(ex);
-            }
-
-        });
-
+        try {
+            SendResult<String, ProductDTO> stringProductDTOSendResult = productInserted.get();
+            productDTO[0] = stringProductDTOSendResult.getProducerRecord().value();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return productDTO[0];
 
     }
