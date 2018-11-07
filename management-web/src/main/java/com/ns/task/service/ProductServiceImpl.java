@@ -1,6 +1,6 @@
 package com.ns.task.service;
 
-import com.ns.task.config.properties.RabbitMQProperties;
+import com.ns.task.config.properties.rabbitMQ.RabbitMQProperties;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;

@@ -42,7 +42,7 @@ public class ProductServiceKafkaImpl implements ProductService {
     @Override
     public List<ProductDTO> getProducts() {
         LOGGER.debug("Sending to kafka broker:");
-        final ListenableFuture<SendResult<String, ProductDTO[]>> products = productsTemplate.send("t.get",
+        productsTemplate.send("t.get",
                 new ProductDTO[0]);
         try {
             latch.await();

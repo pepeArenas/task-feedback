@@ -1,4 +1,4 @@
-package com.ns.task.config.properties;
+package com.ns.task.config.properties.rabbitMQ;
 
 
 import org.springframework.amqp.core.*;
@@ -18,7 +18,7 @@ import org.springframework.messaging.handler.annotation.support.DefaultMessageHa
 @Configuration
 @EnableConfigurationProperties(RabbitMQProperties.class)
 @Profile("rabbitMQ")
-public class RabbitMQConfiguration implements RabbitListenerConfigurer, BrokerConfiguration {
+public class RabbitMQConfiguration implements RabbitListenerConfigurer {
 
     private final RabbitMQProperties properties;
 
