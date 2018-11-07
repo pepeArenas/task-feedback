@@ -11,17 +11,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
 @Profile("kafka")
 public class ProductCoreKafkaServiceImpl implements ProductService {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private ModelMapper mapper;
     private ProductRepository repository;
+    private KafkaTemplate<String, ProductDTO[]> kafkaTemplate;
+    private KafkaTemplate<String, ProductDTO> productTemplate;
+    private static final String RESPONSE_PRODUCTS_TOPIC = "t.products";
+    private static final String RESPONSE_PRODUCT_TOPIC = "t.product";
+
+    @Autowired
+    public void setProductTemplate(KafkaTemplate<String, ProductDTO> productTemplate) {
+        this.productTemplate = productTemplate;
+    }
+
+    @Autowired
+    public void setKafkaTemplate(KafkaTemplate<String, ProductDTO[]> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     @Autowired
     public void setMapper(ModelMapper mapper) {
@@ -33,18 +52,44 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
         this.repository = repository;
     }
 
-    @KafkaListener(topics = "t.get", containerFactory = "kafkaListenerContainerFactory")
-    public List<ProductDTO> receiverForAllProductsRPC(ProductDTO message) {
+    @KafkaListener(topics = "t.get", containerFactory = "kafkaProductListenerContainerFactory")
+    public ProductDTO[] receiverForAllProductsRPC(ProductDTO[] message) {
         final List<ProductDTO> products = getProducts();
-        logger.debug("Products returned form DB {}", products);
-        return products;
+        LOGGER.debug("Products returned form DB {}", products);
+        ProductDTO[] productsAsArray = new ProductDTO[products.size()];
+
+        final ListenableFuture<SendResult<String, ProductDTO[]>> future = kafkaTemplate.send(RESPONSE_PRODUCTS_TOPIC, productsAsArray);
+        try {
+            future.get();
+        } catch (InterruptedException e) {
+            LOGGER.error("An exception has occurred while thread was sleep {}", e);
+        } catch (ExecutionException e) {
+            LOGGER.error("An exception has occurred while asynchronous task block the thread {}", e);
+        }
+        future.addCallback(new ListenableFutureCallback<SendResult<String, ProductDTO[]>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                LOGGER.error("An error has occurred when trying send a message {}", throwable);
+            }
+
+            @Override
+            public void onSuccess(SendResult<String, ProductDTO[]> stringSendResult) {
+                LOGGER.debug("The message has been sent successfully" +
+                                "Partition: {}, " +
+                                "Topic: {}, " +
+                                "Offset: {}", stringSendResult.getRecordMetadata().partition(),
+                        stringSendResult.getRecordMetadata().topic(),
+                        stringSendResult.getRecordMetadata().offset());
+            }
+        });
+        return productsAsArray;
     }
 
 
     @Override
     public List<ProductDTO> getProducts() {
         final List<ProductEntity> products = repository.retrieveProducts();
-        logger.debug("Number of returned products from DB {}", products.size());
+        LOGGER.debug("Number of returned products from DB {}", products.size());
         return products.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -52,22 +97,23 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
 
     @KafkaListener(topics = "t.insert", containerFactory = "kafkaListenerContainerFactory")
     public ProductDTO receiverRPC(ProductDTO product) {
-        logger.info("Received message from Kafka: {}", product.toString());
-        return insertProduct(product);
+        LOGGER.debug("Received message from Kafka: {}", product.toString());
+        ProductDTO persistedProduct = insertProduct(product);
+        productTemplate.send(RESPONSE_PRODUCT_TOPIC, persistedProduct);
+        return persistedProduct;
     }
 
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
         ProductEntity productEntity = convertToEntity(product);
         try {
-            logger.debug("Sending data to DB {}", productEntity);
+            LOGGER.debug("Sending data to DB {}", productEntity);
             productEntity = repository.saveProduct(productEntity);
-            product.setMessage("Name and model of the service exists already");
-            logger.debug("Getting persisted data from insert to DB {}", productEntity);
+            LOGGER.debug("Getting persisted data from insert to DB {}", productEntity);
         } catch (DataIntegrityViolationException exception) {
-            product.setMessage("Name and model already exists");
-            return product;
+            productEntity.setMessage("Name and model already exists");
         }
+
         return convertToDto(productEntity);
     }
 
