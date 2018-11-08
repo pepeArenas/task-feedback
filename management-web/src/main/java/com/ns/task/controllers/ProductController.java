@@ -44,14 +44,15 @@ public class ProductController {
         String view = "productAdded";
         if (result.hasErrors()) {
             view = "addProduct";
+        } else {
+            final ProductDTO productDTO = productService.insertProduct(product);
+            if (productDTO.getMessage() != null) {
+                model.addAttribute("messageException", productDTO.getMessage());
+                view = "managementError";
+            }
+            model.addAttribute("name", productDTO.getName());
+            model.addAttribute("model", productDTO.getModel());
         }
-        final ProductDTO productDTO = productService.insertProduct(product);
-        if (productDTO.getMessage() != null) {
-            model.addAttribute("messageException", productDTO.getMessage());
-            view = "managementError";
-        }
-        model.addAttribute("name", productDTO.getName());
-        model.addAttribute("model", productDTO.getModel());
 
         return view;
     }

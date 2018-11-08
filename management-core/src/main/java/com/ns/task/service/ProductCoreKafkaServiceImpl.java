@@ -29,7 +29,7 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     private ProductRepository repository;
     private KafkaTemplate<String, ProductDTO[]> kafkaTemplate;
     private KafkaTemplate<String, ProductDTO> producTemplate;
-    private static final String RESPONSE_TOPIC = "t.resultado";
+    private static final String RESPONSE_PRODUCTS_TOPIC = "t.productos";
     private static final String RESPONSE_PRODUCT_TOPIC = "t.producto";
 
     @Autowired
@@ -60,7 +60,7 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
         for (int i = 0; i < products.size(); i++) {
             productsAsArray[i] = products.get(i);
         }
-        final ListenableFuture<SendResult<String, ProductDTO[]>> future = kafkaTemplate.send(RESPONSE_TOPIC, productsAsArray);
+        final ListenableFuture<SendResult<String, ProductDTO[]>> future = kafkaTemplate.send(RESPONSE_PRODUCTS_TOPIC, productsAsArray);
         try {
             future.get();
         } catch (InterruptedException e) {
