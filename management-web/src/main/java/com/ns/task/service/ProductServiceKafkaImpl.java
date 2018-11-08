@@ -8,15 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
-import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @Profile("kafka")
@@ -25,7 +22,11 @@ public class ProductServiceKafkaImpl implements ProductService {
     private KafkaTemplate<String, ProductDTO> kafkaTemplate;
     private KafkaTemplate<String, ProductDTO[]> productsTemplate;
     private List<ProductDTO> productToReturn = new ArrayList<>();
+    private ProductDTO productPersisted;
     private static final String RESPONSE_TOPIC = "t.resultado";
+    private static final String RESPONSE_PRODUCT_TOPIC = "t.producto";
+    private CountDownLatch latch = new CountDownLatch(1);
+    private CountDownLatch latchProduct = new CountDownLatch(1);
 
     @Autowired
     public void setKafkaTemplate(KafkaTemplate<String, ProductDTO> kafkaTemplate) {
@@ -37,7 +38,6 @@ public class ProductServiceKafkaImpl implements ProductService {
         this.productsTemplate = productsTemplate;
     }
 
-    private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
     public List<ProductDTO> getProducts() {
@@ -68,18 +68,28 @@ public class ProductServiceKafkaImpl implements ProductService {
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
         LOGGER.debug("Sending to kafka broker: {}", product);
-        final ProductDTO[] productDTO = {new ProductDTO()};
-        final ListenableFuture<SendResult<String, ProductDTO>> productInserted = kafkaTemplate.send("t.insert",
+        kafkaTemplate.send("t.insert",
                 product);
-        try {
-            final SendResult<String, ProductDTO> future = productInserted.get();
-            productDTO[0] = future.getProducerRecord().value();
-        } catch (InterruptedException e) {
-            LOGGER.error("An exception has occurred while thread was sleep {}", e);
-        } catch (ExecutionException e) {
-            LOGGER.error("An exception has occurred while asynchronous task block the thread {}", e);
-        }
-        return productDTO[0];
 
+        try {
+            latchProduct.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return productPersisted;
+
+    }
+
+    @KafkaListener(topics = RESPONSE_PRODUCT_TOPIC, containerFactory = "kafkaListenerContainerFactory")
+    public ProductDTO readProductsFromTopic(ProductDTO products) {
+        LOGGER.debug("The product returned from Kakfa is: {}", products);
+        assignRetrieveProductForView(products);
+        latchProduct.countDown();
+        return products;
+    }
+
+    private void assignRetrieveProductForView(ProductDTO products) {
+        //TODO synchronize
+        productPersisted = products;
     }
 }

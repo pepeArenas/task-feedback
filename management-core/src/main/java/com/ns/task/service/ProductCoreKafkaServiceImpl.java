@@ -28,7 +28,14 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     private ModelMapper mapper;
     private ProductRepository repository;
     private KafkaTemplate<String, ProductDTO[]> kafkaTemplate;
+    private KafkaTemplate<String, ProductDTO> producTemplate;
     private static final String RESPONSE_TOPIC = "t.resultado";
+    private static final String RESPONSE_PRODUCT_TOPIC = "t.producto";
+
+    @Autowired
+    public void setProducTemplate(KafkaTemplate<String, ProductDTO> producTemplate) {
+        this.producTemplate = producTemplate;
+    }
 
     @Autowired
     public void setKafkaTemplate(KafkaTemplate<String, ProductDTO[]> kafkaTemplate) {
@@ -93,7 +100,9 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     @KafkaListener(topics = "t.insert", containerFactory = "kafkaListenerContainerFactory")
     public ProductDTO receiverRPC(ProductDTO product) {
         LOGGER.debug("Received message from Kafka: {}", product.toString());
-        return insertProduct(product);
+        ProductDTO productPersisted = insertProduct(product);
+        producTemplate.send(RESPONSE_PRODUCT_TOPIC, productPersisted);
+        return productPersisted;
     }
 
     @Override
