@@ -33,7 +33,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         insertion.setParameter("model", product.getModel());
         insertion.setParameter("price", product.getPrice());
         insertion.execute();
-        logger.debug("Inserted product is {}", product);
+        logger.debug("Inserted service is {}", product);
         return product;
     }
 }

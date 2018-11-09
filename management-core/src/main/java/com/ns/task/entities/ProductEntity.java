@@ -31,7 +31,7 @@ public class ProductEntity {
     @Digits(integer = 5, fraction = 2, message = CommonProperties.INVALID_PRICE_FORMAT)
     private BigDecimal price;
     @Transient
-    private boolean isComplete;
+    private String message;
 
     public ProductEntity() {
     }
@@ -68,12 +68,11 @@ public class ProductEntity {
         this.price = price;
     }
 
-    public boolean isComplete() {
-        return isComplete;
+    public String getMessage() {
+        return message;
     }
 
-    public void setComplete(boolean complete) {
-        isComplete = complete;
+    public void setMessage(String message) {
+        this.message = message;
     }
-    
 }

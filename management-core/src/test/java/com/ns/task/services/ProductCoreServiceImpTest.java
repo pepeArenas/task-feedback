@@ -1,8 +1,8 @@
 package com.ns.task.services;
 
 
+import com.ns.task.config.properties.CommonProperties;
 import com.ns.task.entities.ProductEntity;
-import com.ns.task.exceptions.ProductManagementException;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.repositories.ProductRepository;
 import com.ns.task.service.ProductCoreServiceImpl;
@@ -81,14 +81,16 @@ public class ProductCoreServiceImpTest {
         assertProduct(returned, productEntity);
     }
 
-    @Test(expected = ProductManagementException.class)
+    @Test
     public void shouldThrowAnExceptionWhenInsertDuplicateProduct() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setName("SCREWDRIVER");
         productDTO.setModel("S090");
         productDTO.setPrice(new BigDecimal("12.20"));
         when(repository.saveProduct(any(ProductEntity.class))).thenThrow(DataIntegrityViolationException.class);
-        productService.insertProduct(productDTO);
+        ProductDTO product = productService.insertProduct(productDTO);
+        assertEquals(CommonProperties.DUPLICATE_PRODUCT, product.getMessage());
+
     }
 
     @Test

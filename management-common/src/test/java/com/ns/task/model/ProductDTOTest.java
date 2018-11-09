@@ -1,5 +1,6 @@
 package com.ns.task.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ns.task.config.properties.CommonProperties;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -33,6 +34,7 @@ public class ProductDTOTest {
 
     @Test
     public void productShouldNoViolations() {
+        ObjectMapper mapper = new ObjectMapper();
         // given:
         ProductDTO product = new ProductDTO();
         product.setName("Screwdriver");

@@ -1,13 +1,15 @@
 package com.ns.task.service;
 
+import com.ns.task.config.properties.CommonProperties;
+import com.ns.task.config.properties.RabbitConfig;
 import com.ns.task.entities.ProductEntity;
-import com.ns.task.exceptions.ProductManagementException;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.repositories.ProductRepository;
 import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -17,36 +19,50 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductCoreServiceImpl implements ProductService {
-
-    private final ModelMapper mapper;
-    private final ProductRepository repository;
-    private static final Logger logger = LogManager.getLogger();
-
+    private ModelMapper mapper;
+    private ProductRepository repository;
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired
-    public ProductCoreServiceImpl(ModelMapper mapper, ProductRepository repository) {
+    public ProductCoreServiceImpl(
+            ModelMapper mapper,
+            ProductRepository repository) {
         this.mapper = mapper;
         this.repository = repository;
     }
 
+    @RabbitListener(queues = RabbitConfig.QUEUE_GET)
+    public List<ProductDTO> receiverForAllProductsRPC(String message) {
+        List<ProductDTO> products = getProducts();
+        LOGGER.debug("Products returned form DB {}", products);
+        return products;
+    }
+
+
     @Override
     public List<ProductDTO> getProducts() {
         List<ProductEntity> products = repository.retrieveProducts();
-        logger.debug("Number of returned products from DB {}", products.size());
+        LOGGER.debug("Number of returned products from DB {}", products.size());
         return products.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    @RabbitListener(queues = RabbitConfig.QUEUE)
+    public ProductDTO receiverRPC(ProductDTO product) {
+        LOGGER.info("Received message from RabbitMQ: {}", product.toString());
+        return insertProduct(product);
     }
 
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
         ProductEntity productEntity = convertToEntity(product);
         try {
-            logger.debug("Sending data to DB {}", productEntity);
+            LOGGER.debug("Sending data to DB {}", productEntity);
             productEntity = repository.saveProduct(productEntity);
-            logger.debug("Getting persisted data from insert to DB {}", productEntity);
+            LOGGER.debug("Getting persisted data from insert to DB {}", productEntity);
         } catch (DataIntegrityViolationException exception) {
-            throw new ProductManagementException("Name and model of the product exists already", exception);
+            productEntity.setMessage(CommonProperties.DUPLICATE_PRODUCT);
         }
         return convertToDto(productEntity);
 

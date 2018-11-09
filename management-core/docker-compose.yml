@@ -12,4 +12,16 @@ services:
       MYSQL_PASSWORD: mypassword
       MYSQL_ROOT_PASSWORD: myrootpassword
     container_name: mysqldbserver
+  rabbit1:
+    image: rabbitmq
+    environment:
+      RABBITMQ_ERLANG_COOKIE: SWQOKODSQALRPCLNMEQG
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+    - 15673:15672
+    - 5673:5672
+    volumes:
+    - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
 
