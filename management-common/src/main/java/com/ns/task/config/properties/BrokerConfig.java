@@ -8,29 +8,25 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 
 @Configuration
-@ConfigurationProperties
-public class RabbitConfig implements RabbitListenerConfigurer {
-    public static final String EXCHANGE = "x.management";
-    public static final String ROUTING_KEY = "management";
-    public static final String QUEUE = "q.management.insert";
-    public static final String EXCHANGE_GET = "x.management.get";
-    public static final String ROUTING_KEY_GET = "management.get";
-    public static final String QUEUE_GET = "q.management.get";
-    private static final String HOSTNAME = "localhost";
-    private static final String USERNAME = "admin";
-    private static final String PASSWORD = "admin";
-    private static final int PORT = 5673;
+@EnableConfigurationProperties(BrokerProperties.class)
+public class BrokerConfig implements RabbitListenerConfigurer {
+
+    private final BrokerProperties properties;
+
+    public BrokerConfig(BrokerProperties properties) {
+        this.properties = properties;
+    }
 
     @Bean
     Exchange getExchange() {
-        return ExchangeBuilder.directExchange(EXCHANGE).
+        return ExchangeBuilder.directExchange(properties.getExchangesInsertion()).
                 build();
     }
 
@@ -38,20 +34,20 @@ public class RabbitConfig implements RabbitListenerConfigurer {
     Binding getBinding() {
         return BindingBuilder.bind(getQueue()).
                 to(getExchange()).
-                with(ROUTING_KEY).
+                with(properties.getRoutingKeyInsertion()).
                 noargs();
     }
 
     @Bean
     Queue getQueue() {
-        return QueueBuilder.durable(QUEUE).
+        return QueueBuilder.durable(properties.getQueueInsertion()).
                 autoDelete().
                 build();
     }
 
     @Bean
     Exchange getExchangeForGet() {
-        return ExchangeBuilder.directExchange(EXCHANGE_GET).
+        return ExchangeBuilder.directExchange(properties.getExchangesRetrieve()).
                 build();
     }
 
@@ -59,30 +55,30 @@ public class RabbitConfig implements RabbitListenerConfigurer {
     Binding getBindingForGet() {
         return BindingBuilder.bind(getQueueForGet()).
                 to(getExchangeForGet()).
-                with(ROUTING_KEY_GET).
+                with(properties.getRoutingKeyRetrieve()).
                 noargs();
     }
 
     @Bean
     Queue getQueueForGet() {
-        return QueueBuilder.durable(QUEUE_GET).
+        return QueueBuilder.durable(properties.getQueueRetrieve()).
                 autoDelete().
                 build();
     }
 
     @Bean
     ConnectionFactory connectionFactory() {
-        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(
-                RabbitConfig.HOSTNAME,
-                RabbitConfig.PORT);
-        cachingConnectionFactory.setUsername(RabbitConfig.USERNAME);
-        cachingConnectionFactory.setPassword(RabbitConfig.PASSWORD);
+        final CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(
+                properties.getHostname(),
+                properties.getPort());
+        cachingConnectionFactory.setUsername(properties.getUsername());
+        cachingConnectionFactory.setPassword(properties.getPassword());
         return cachingConnectionFactory;
     }
 
     @Bean
     public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(producerJackson2MessageConverter());
         return rabbitTemplate;
     }
@@ -99,7 +95,7 @@ public class RabbitConfig implements RabbitListenerConfigurer {
 
     @Bean
     public DefaultMessageHandlerMethodFactory messageHandlerMethodFactory() {
-        DefaultMessageHandlerMethodFactory factory = new DefaultMessageHandlerMethodFactory();
+        final DefaultMessageHandlerMethodFactory factory = new DefaultMessageHandlerMethodFactory();
         factory.setMessageConverter(consumerJackson2MessageConverter());
         return factory;
     }

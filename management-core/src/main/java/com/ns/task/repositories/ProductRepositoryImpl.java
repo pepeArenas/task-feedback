@@ -22,13 +22,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
     @Override
     public List<ProductEntity> retrieveProducts() {
-        StoredProcedureQuery retrieveProducts = manager.createNamedStoredProcedureQuery("findAllProducts");
+        final StoredProcedureQuery retrieveProducts = manager.createNamedStoredProcedureQuery("findAllProducts");
         return retrieveProducts.getResultList();
     }
 
     @Override
     public ProductEntity saveProduct(ProductEntity product) throws DataIntegrityViolationException {
-        StoredProcedureQuery insertion = manager.createNamedStoredProcedureQuery("insertProduct");
+        final StoredProcedureQuery insertion = manager.createNamedStoredProcedureQuery("insertProduct");
         insertion.setParameter("productName", product.getName());
         insertion.setParameter("model", product.getModel());
         insertion.setParameter("price", product.getPrice());

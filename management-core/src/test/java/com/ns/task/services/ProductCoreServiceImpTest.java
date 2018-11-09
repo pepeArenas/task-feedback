@@ -4,6 +4,7 @@ package com.ns.task.services;
 import com.ns.task.config.properties.CommonProperties;
 import com.ns.task.entities.ProductEntity;
 import com.ns.task.model.ProductDTO;
+import com.ns.task.model.ProductDTOBuilder;
 import com.ns.task.repositories.ProductRepository;
 import com.ns.task.service.ProductCoreServiceImpl;
 import org.junit.Before;
@@ -43,14 +44,14 @@ public class ProductCoreServiceImpTest {
 
     @Test
     public void getProducts() {
-        ProductEntity productEntity = new ProductEntity();
+        final ProductEntity productEntity = new ProductEntity();
         productEntity.setId(1);
         productEntity.setName("SCREWDRIVER");
         productEntity.setModel("S090");
         productEntity.setPrice(new BigDecimal("12.2"));
         productEntities.add(productEntity);
         when(repository.retrieveProducts()).thenReturn(productEntities);
-        List<ProductDTO> products = productService.getProducts();
+        final List<ProductDTO> products = productService.getProducts();
         assertEquals(products.size(), 1);
         assertProduct(products.get(0), productEntities.get(0));
     }
@@ -58,24 +59,25 @@ public class ProductCoreServiceImpTest {
     @Test
     public void getNoProducts() {
         when(repository.retrieveProducts()).thenReturn(productEntities);
-        List<ProductDTO> products = productService.getProducts();
+        final List<ProductDTO> products = productService.getProducts();
         assertEquals(products.size(), 0);
     }
 
     @Test
     public void insertProduct() throws DataIntegrityViolationException {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setName("SCREWDRIVER");
-        productDTO.setModel("S090");
-        productDTO.setPrice(new BigDecimal("12.20"));
-        ProductEntity productEntity = new ProductEntity();
+        final ProductDTO productDTO = new ProductDTOBuilder()
+                .setName("SCREWDRIVER")
+                .setPrice(new BigDecimal("12.20"))
+                .setModel("S090")
+                .createProductDTO();
+        final ProductEntity productEntity = new ProductEntity();
         productEntity.setId(1);
         productEntity.setName("SCREWDRIVER");
         productEntity.setModel("S090");
         productEntity.setPrice(new BigDecimal("12.20"));
         when(repository.saveProduct(any(ProductEntity.class))).thenReturn(productEntity);
-        ProductDTO returned = productService.insertProduct(productDTO);
-        ArgumentCaptor<ProductEntity> productArguments = ArgumentCaptor.forClass(ProductEntity.class);
+        final ProductDTO returned = productService.insertProduct(productDTO);
+        final ArgumentCaptor<ProductEntity> productArguments = ArgumentCaptor.forClass(ProductEntity.class);
         verify(repository, timeout(1)).saveProduct(productArguments.capture());
         verifyNoMoreInteractions(repository);
         assertProduct(returned, productEntity);
@@ -83,24 +85,25 @@ public class ProductCoreServiceImpTest {
 
     @Test
     public void shouldThrowAnExceptionWhenInsertDuplicateProduct() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setName("SCREWDRIVER");
-        productDTO.setModel("S090");
-        productDTO.setPrice(new BigDecimal("12.20"));
+        final ProductDTO productDTO = new ProductDTOBuilder()
+                .setName("SCREWDRIVER")
+                .setModel("S090")
+                .setPrice(new BigDecimal("12.20"))
+                .createProductDTO();
         when(repository.saveProduct(any(ProductEntity.class))).thenThrow(DataIntegrityViolationException.class);
-        ProductDTO product = productService.insertProduct(productDTO);
+        final ProductDTO product = productService.insertProduct(productDTO);
         assertEquals(CommonProperties.DUPLICATE_PRODUCT, product.getMessage());
 
     }
 
     @Test
     public void whenConvertPostEntityToPostDto_thenCorrect() {
-        ProductEntity entity = new ProductEntity();
+        final ProductEntity entity = new ProductEntity();
         entity.setId(1);
         entity.setName("SCREWDRIVER");
         entity.setModel("S090");
         entity.setPrice(new BigDecimal("12.90"));
-        ProductDTO postDto = modelMapper.map(entity, ProductDTO.class);
+        final ProductDTO postDto = modelMapper.map(entity, ProductDTO.class);
         assertProduct(postDto, entity);
     }
 

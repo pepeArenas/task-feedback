@@ -1,0 +1,10 @@
+spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/pages/
+      suffix: .jsp
+  application:
+    name: management-web
+  cloud:
+    config:
+      uri: http://localhost:8888

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
+@ActiveProfiles("test")
 public class ProductRepositoryImplTest {
 
     @Autowired
@@ -40,8 +42,8 @@ public class ProductRepositoryImplTest {
 
     @Test
     public void saveProduct() {
-        ProductEntity productSaved = repository.saveProduct(hammerTest);
-        List<ProductEntity> productsReturned = repository.findByNameAndModelAndPrice(
+        final ProductEntity productSaved = repository.saveProduct(hammerTest);
+        final List<ProductEntity> productsReturned = repository.findByNameAndModelAndPrice(
                 productSaved.getName(),
                 productSaved.getModel(),
                 productSaved.getPrice());
@@ -53,13 +55,13 @@ public class ProductRepositoryImplTest {
 
     @Test
     public void shouldSaveProductSameNameDifferentModel() {
-        ProductEntity sameNameAndModel = new ProductEntity();
+        final ProductEntity sameNameAndModel = new ProductEntity();
         sameNameAndModel.setName("TEST_SCREWDRIVER2");
         sameNameAndModel.setModel("TEST_S090");
         sameNameAndModel.setPrice(new BigDecimal("12.90"));
         repository.saveProduct(screwdriverTest);
         repository.saveProduct(sameNameAndModel);
-        List<ProductEntity> productsReturned = repository.findByNameContainsOrderByNameAsc("TEST_");
+        final List<ProductEntity> productsReturned = repository.findByNameContainsOrderByNameAsc("TEST_");
         Assertions.assertThat(productsReturned.isEmpty()).isFalse();
         Assertions.assertThat(productsReturned.size()).isEqualTo(2);
         validateContentOfFieldsAreNotNull(productsReturned.get(0));
@@ -72,7 +74,7 @@ public class ProductRepositoryImplTest {
     public void retrieveAllProduct() {
         repository.saveProduct(hammerTest);
         repository.saveProduct(screwdriverTest);
-        List<ProductEntity> productReturnedFormDB = repository.findByNameContainsOrderByNameAsc("TEST_");
+        final List<ProductEntity> productReturnedFormDB = repository.findByNameContainsOrderByNameAsc("TEST_");
         Assertions.assertThat(productReturnedFormDB.isEmpty()).isFalse();
         Assertions.assertThat(productReturnedFormDB.size()).isEqualTo(2);
         validateContentOfFieldsAreNotNull(productReturnedFormDB.get(0));

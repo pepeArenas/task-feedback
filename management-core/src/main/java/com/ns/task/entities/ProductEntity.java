@@ -33,9 +33,6 @@ public class ProductEntity {
     @Transient
     private String message;
 
-    public ProductEntity() {
-    }
-
     public Integer getId() {
         return id;
     }

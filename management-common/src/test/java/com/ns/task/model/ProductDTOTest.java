@@ -1,9 +1,7 @@
 package com.ns.task.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ns.task.config.properties.CommonProperties;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -34,14 +32,14 @@ public class ProductDTOTest {
 
     @Test
     public void productShouldNoViolations() {
-        ObjectMapper mapper = new ObjectMapper();
         // given:
-        ProductDTO product = new ProductDTO();
-        product.setName("Screwdriver");
-        product.setModel("A083434");
-        product.setPrice(new BigDecimal("12.3"));
+        final ProductDTO product = new ProductDTOBuilder()
+                .setName("Screwdriver")
+                .setModel("A083434")
+                .setPrice(new BigDecimal("12.3"))
+                .createProductDTO();
         // when:
-        Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
+        final Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
         // then:
         assertTrue(violations.isEmpty());
     }
@@ -49,90 +47,96 @@ public class ProductDTOTest {
     @Test
     public void productShouldDetectInvalidMinNameSize() {
         // given:
-        ProductDTO product = new ProductDTO();
-        product.setName("De");
-        product.setModel("A083434");
-        product.setPrice(new BigDecimal("12.9"));
+        final ProductDTO product = new ProductDTOBuilder()
+                .setName("De")
+                .setModel("A083434")
+                .setPrice(new BigDecimal("12.9"))
+                .createProductDTO();
         // when:
-        Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
+        final Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
         // then:
         assertEquals(violations.size(), 1);
-        ConstraintViolation<ProductDTO> violation = violations.iterator().next();
-        Assert.assertEquals(CommonProperties.INVALID_NAME_SIZE, violation.getMessage());
+        final ConstraintViolation<ProductDTO> violation = violations.iterator().next();
+        assertEquals(CommonProperties.INVALID_NAME_SIZE, violation.getMessage());
     }
 
     @Test
     public void productShouldDetectInvalidMaxNameSize() {
         // given:
-        ProductDTO product = new ProductDTO();
-        product.setName("1234567890123456789012345678901234567890123456");
-        product.setModel("A083434");
-        product.setPrice(new BigDecimal("12.9"));
+        final ProductDTO product = new ProductDTOBuilder()
+                .setName("1234567890123456789012345678901234567890123456")
+                .setModel("A083434")
+                .setPrice(new BigDecimal("12.9"))
+                .createProductDTO();
         // when:
-        Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
+        final Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
         // then:
         assertEquals(violations.size(), 1);
-        ConstraintViolation<ProductDTO> violation = violations.iterator().next();
+        final ConstraintViolation<ProductDTO> violation = violations.iterator().next();
         assertEquals(CommonProperties.INVALID_NAME_SIZE, violation.getMessage());
     }
 
     @Test
     public void productShouldDetectInvalidMinModelSize() {
         // given:
-        ProductDTO product = new ProductDTO();
-        product.setName("Screwdriver");
-        product.setModel("A0");
-        product.setPrice(new BigDecimal("12.9"));
+        final ProductDTO product = new ProductDTOBuilder()
+                .setName("Screwdriver")
+                .setModel("A0")
+                .setPrice(new BigDecimal("12.9"))
+                .createProductDTO();
         // when:
-        Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
+        final Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
         // then:
         assertEquals(violations.size(), 1);
-        ConstraintViolation<ProductDTO> violation = violations.iterator().next();
+        final ConstraintViolation<ProductDTO> violation = violations.iterator().next();
         assertEquals(CommonProperties.INVALID_MODEL_SIZE, violation.getMessage());
     }
 
     @Test
     public void productShouldDetectInvalidMaxModelSize() {
         // given:
-        ProductDTO product = new ProductDTO();
-        product.setName("Screwdriver");
-        product.setModel("1234567890123456789012345678901234567890123456");
-        product.setPrice(new BigDecimal("12.9"));
+        final ProductDTO product = new ProductDTOBuilder()
+                .setName("Screwdriver")
+                .setModel("1234567890123456789012345678901234567890123456")
+                .setPrice(new BigDecimal("12.9"))
+                .createProductDTO();
         // when:
-        Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
+        final Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
         // then:
         assertEquals(violations.size(), 1);
-        ConstraintViolation<ProductDTO> violation = violations.iterator().next();
+        final ConstraintViolation<ProductDTO> violation = violations.iterator().next();
         assertEquals(CommonProperties.INVALID_MODEL_SIZE, violation.getMessage());
     }
 
     @Test
     public void productShouldDetectInvalidPriceSize() {
         // given:
-        ProductDTO product = new ProductDTO();
-        product.setName("Screwdriver");
-        product.setModel("A083434");
-        product.setPrice(new BigDecimal("123456.92"));
+        final ProductDTO product = new ProductDTOBuilder()
+                .setName("Screwdriver")
+                .setModel("A083434")
+                .setPrice(new BigDecimal("123456.92"))
+                .createProductDTO();
         // when:
-        Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
+        final Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
         // then:
         assertEquals(violations.size(), 1);
-        ConstraintViolation<ProductDTO> violation = violations.iterator().next();
+        final ConstraintViolation<ProductDTO> violation = violations.iterator().next();
         assertEquals(CommonProperties.INVALID_PRICE_FORMAT, violation.getMessage());
     }
 
     @Test
     public void productShouldDetectInvalidPositivePrice() {
         // given:
-        ProductDTO product = new ProductDTO();
-        product.setName("Screwdriver");
-        product.setModel("A083434");
-        product.setPrice(new BigDecimal("-1"));
+        final ProductDTO product = new ProductDTOBuilder()
+                .setName("Screwdriver")
+                .setModel("A083434")
+                .setPrice(new BigDecimal("-1"))
+                .createProductDTO();
         // when:
-        Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
+        final Set<ConstraintViolation<ProductDTO>> violations = validator.validate(product);
         // then:
         assertEquals(violations.size(), 1);
-        ConstraintViolation<ProductDTO> violation = violations.iterator().next();
+        final ConstraintViolation<ProductDTO> violation = violations.iterator().next();
         assertEquals(CommonProperties.INVALID_POSITIVE_PRICE, violation.getMessage());
     }
 

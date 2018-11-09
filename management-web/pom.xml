@@ -10,13 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>management-web</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
 
     <properties>
         <bootstrap.version>3.3.7</bootstrap.version>
         <jcabi-log.version>0.17.1</jcabi-log.version>
         <jquery.version>3.1.1</jquery.version>
+        <spring-cloud.version>Edgware.SR5</spring-cloud.version>
     </properties>
 
     <dependencies>
@@ -53,6 +54,14 @@
             <artifactId>jquery</artifactId>
             <version>${jquery.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -66,6 +75,16 @@
             </plugin>
         </plugins>
     </build>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

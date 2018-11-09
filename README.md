@@ -28,3 +28,6 @@ One stopped run the following command in order to remove them
 docker-compose rm
 In order to recreate them run the following:
 docker-compose up --build -d
+
+In order to start the application, first start management-cloud in order to other modules pick up the configuration 
+on start
