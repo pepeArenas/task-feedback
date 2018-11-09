@@ -1,7 +1,6 @@
 package com.ns.task.service;
 
 import com.ns.task.config.properties.CommonProperties;
-import com.ns.task.config.properties.RabbitConfig;
 import com.ns.task.entities.ProductEntity;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.repositories.ProductRepository;
@@ -31,7 +30,7 @@ public class ProductCoreServiceImpl implements ProductService {
         this.repository = repository;
     }
 
-    @RabbitListener(queues = RabbitConfig.QUEUE_GET)
+    @RabbitListener(queues = "q.management.get")
     public List<ProductDTO> receiverForAllProductsRPC(String message) {
         final List<ProductDTO> products = getProducts();
         LOGGER.debug("Products returned form DB {}", products);
@@ -48,7 +47,7 @@ public class ProductCoreServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
-    @RabbitListener(queues = RabbitConfig.QUEUE)
+    @RabbitListener(queues = "q.management.insert")
     public ProductDTO receiverRPC(ProductDTO product) {
         LOGGER.info("Received message from RabbitMQ: {}", product.toString());
         return insertProduct(product);
