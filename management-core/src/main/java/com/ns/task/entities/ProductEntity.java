@@ -33,14 +33,6 @@ public class ProductEntity {
     @Transient
     private String message;
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -73,4 +65,11 @@ public class ProductEntity {
         this.price = price;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

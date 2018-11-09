@@ -12,6 +12,7 @@
     <packaging>jar</packaging>
     <properties>
         <modelmapper.version>0.7.4</modelmapper.version>
+        <mysql-connector-java.version>8.0.12</mysql-connector-java.version>
         <spring-cloud.version>Edgware.SR5</spring-cloud.version>
     </properties>
     <dependencies>
