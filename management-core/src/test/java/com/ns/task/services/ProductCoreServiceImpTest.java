@@ -62,7 +62,7 @@ public class ProductCoreServiceImpTest {
         final List<ProductDTO> products = productService.getProducts();
         assertEquals(products.size(), 0);
     }
-    
+
     @Test
     public void insertProduct() throws DataIntegrityViolationException {
         final ProductDTO productDTO = new ProductDTOBuilder()

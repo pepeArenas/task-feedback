@@ -15,6 +15,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private static final Logger logger = LogManager.getLogger();
+    private static final String GET_ALL_PRODUCTS = "getAllProducts";
     private final RabbitTemplate rabbitTemplate;
     private final BrokerProperties properties;
 
@@ -28,7 +29,7 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> getProducts() {
         return (List<ProductDTO>) rabbitTemplate.convertSendAndReceive(properties.getExchangesRetrieve(),
                 properties.getRoutingKeyRetrieve(),
-                "getAllProducts");
+                GET_ALL_PRODUCTS);
     }
 
     @Override
