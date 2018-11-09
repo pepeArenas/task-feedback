@@ -24,8 +24,8 @@ public class ProductServiceKafkaImpl implements ProductService {
     private KafkaTemplate<String, ProductDTO[]> productsTemplate;
     private List<ProductDTO> productToReturn = new ArrayList<>();
     private ProductDTO productPersisted;
-    private static final String RESPONSE_PRODUCTS_TOPIC = "t.productos";
-    private static final String RESPONSE_PRODUCT_TOPIC = "t.producto";
+    private static final String RESPONSE_PRODUCTS_TOPIC = "t.products";
+    private static final String RESPONSE_PRODUCT_TOPIC = "t.product";
     private CountDownLatch latch = new CountDownLatch(1);
     private CountDownLatch latchProduct;
     private final static Object lock = new Object();

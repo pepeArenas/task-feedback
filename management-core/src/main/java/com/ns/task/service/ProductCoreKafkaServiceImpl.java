@@ -18,7 +18,6 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,13 +27,13 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     private ModelMapper mapper;
     private ProductRepository repository;
     private KafkaTemplate<String, ProductDTO[]> kafkaTemplate;
-    private KafkaTemplate<String, ProductDTO> producTemplate;
-    private static final String RESPONSE_PRODUCTS_TOPIC = "t.productos";
-    private static final String RESPONSE_PRODUCT_TOPIC = "t.producto";
+    private KafkaTemplate<String, ProductDTO> productTemplate;
+    private static final String RESPONSE_PRODUCTS_TOPIC = "t.products";
+    private static final String RESPONSE_PRODUCT_TOPIC = "t.product";
 
     @Autowired
-    public void setProducTemplate(KafkaTemplate<String, ProductDTO> producTemplate) {
-        this.producTemplate = producTemplate;
+    public void setProductTemplate(KafkaTemplate<String, ProductDTO> productTemplate) {
+        this.productTemplate = productTemplate;
     }
 
     @Autowired
@@ -52,22 +51,22 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
         this.repository = repository;
     }
 
+
+    private ProductDTO[] convertListToArray(List<ProductDTO> list) {
+        return list.stream().toArray(ProductDTO[]::new);
+    }
+
     @KafkaListener(topics = "t.get", containerFactory = "kafkaProductListenerContainerFactory")
     public ProductDTO[] receiverForAllProductsRPC(ProductDTO[] message) {
         final List<ProductDTO> products = getProducts();
         LOGGER.debug("Products returned form DB {}", products);
-        ProductDTO[] productsAsArray = new ProductDTO[products.size()];
-        for (int i = 0; i < products.size(); i++) {
-            productsAsArray[i] = products.get(i);
-        }
+        ProductDTO[] productsAsArray = convertListToArray(products);
         final ListenableFuture<SendResult<String, ProductDTO[]>> future = kafkaTemplate.send(RESPONSE_PRODUCTS_TOPIC, productsAsArray);
-        try {
-            future.get();
-        } catch (InterruptedException e) {
-            LOGGER.error("An exception has occurred while thread was sleep {}", e);
-        } catch (ExecutionException e) {
-            LOGGER.error("An exception has occurred while asynchronous task block the thread {}", e);
-        }
+        messageSentSuccessfully(future);
+        return productsAsArray;
+    }
+
+    private void messageSentSuccessfully(ListenableFuture<SendResult<String, ProductDTO[]>> future) {
         future.addCallback(new ListenableFutureCallback<SendResult<String, ProductDTO[]>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -84,7 +83,6 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
                         stringSendResult.getRecordMetadata().offset());
             }
         });
-        return productsAsArray;
     }
 
 
@@ -101,7 +99,7 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     public ProductDTO receiverRPC(ProductDTO product) {
         LOGGER.debug("Received message from Kafka: {}", product.toString());
         ProductDTO productPersisted = insertProduct(product);
-        producTemplate.send(RESPONSE_PRODUCT_TOPIC, productPersisted);
+        productTemplate.send(RESPONSE_PRODUCT_TOPIC, productPersisted);
         return productPersisted;
     }
 
