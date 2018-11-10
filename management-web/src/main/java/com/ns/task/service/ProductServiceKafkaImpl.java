@@ -99,7 +99,7 @@ public class ProductServiceKafkaImpl implements ProductService {
 
     @KafkaListener(topics = RESPONSE_PRODUCT_TOPIC, containerFactory = "kafkaListenerContainerFactory")
     public ProductDTO readProductsFromTopic(ProductDTO products) {
-        LOGGER.debug("The prod  uct returned from Kakfa is: {}", products);
+        LOGGER.debug("The product returned from Kakfa is: {}", products);
         assignRetrieveProductForView(products);
         latchProduct.countDown();
         isServiceDependantAvailable = true;

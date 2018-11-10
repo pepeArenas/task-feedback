@@ -32,7 +32,7 @@ public class ProductCoreServiceImpl implements ProductService {
         this.repository = repository;
     }
 
-    @RabbitListener(queues = "q.management.get")
+    @RabbitListener(queues = CommonProperties.GET_QUEUE)
     public List<ProductDTO> receiverForAllProductsRPC(String message) {
         final List<ProductDTO> products = getProducts();
         LOGGER.debug("Products returned form DB {}", products);
@@ -49,7 +49,7 @@ public class ProductCoreServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
-    @RabbitListener(queues = "q.management.insert")
+    @RabbitListener(queues = CommonProperties.INSERT_QUEUE)
     public ProductDTO receiverRPC(ProductDTO product) {
         LOGGER.debug("Received message from RabbitMQ: {}", product);
         return insertProduct(product);

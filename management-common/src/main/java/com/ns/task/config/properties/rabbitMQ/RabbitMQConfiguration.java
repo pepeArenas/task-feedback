@@ -1,6 +1,8 @@
 package com.ns.task.config.properties.rabbitMQ;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
@@ -19,7 +21,7 @@ import org.springframework.messaging.handler.annotation.support.DefaultMessageHa
 @EnableConfigurationProperties(RabbitMQProperties.class)
 @Profile("rabbitMQ")
 public class RabbitMQConfiguration implements RabbitListenerConfigurer {
-
+    private static final Logger LOGGER = LogManager.getLogger();
     private final RabbitMQProperties properties;
 
     public RabbitMQConfiguration(RabbitMQProperties properties) {
@@ -28,7 +30,7 @@ public class RabbitMQConfiguration implements RabbitListenerConfigurer {
 
     @Bean
     Exchange getExchange() {
-        System.err.println("%%%%%%%%%%%%RABBIT CONFIGURATION%%%%%%%%%%%%%");
+        LOGGER.error("%%%%%%%%%%%%RABBIT CONFIGURATION%%%%%%%%%%%%%");
         return ExchangeBuilder.directExchange(properties.getExchangesInsertion()).
                 build();
     }

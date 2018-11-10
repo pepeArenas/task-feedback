@@ -6,6 +6,8 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -25,6 +27,7 @@ public class KafkaConsumerConfig {
     private Map<String, Object> props = new HashMap<>();
     private static final String BOOTSTRAP_ADDRESS = "localhost:9092";
     private static final String GROUP_ID = "group_insert";
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Bean
     public Map<String, Object> consumerProps() {
@@ -37,6 +40,7 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ProducerFactory<String, ProductDTO> productProducerFactory() {
+        LOGGER.error("%%%%%%%%%%%%KAFKA CONFIGURATION%%%%%%%%%%%%%");
         return new DefaultKafkaProducerFactory<>(consumerProps());
     }
 
