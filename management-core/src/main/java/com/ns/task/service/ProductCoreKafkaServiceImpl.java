@@ -60,7 +60,7 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     public ProductDTO[] receiverForAllProductsRPC(ProductDTO[] message) {
         final List<ProductDTO> products = getProducts();
         LOGGER.debug("Products returned form DB {}", products);
-        ProductDTO[] productsAsArray = convertListToArray(products);
+        final ProductDTO[] productsAsArray = convertListToArray(products);
         final ListenableFuture<SendResult<String, ProductDTO[]>> future = kafkaTemplate.send(RESPONSE_PRODUCTS_TOPIC, productsAsArray);
         messageSentSuccessfully(future);
         return productsAsArray;
@@ -98,7 +98,7 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     @KafkaListener(topics = "t.insert", containerFactory = "kafkaListenerContainerFactory")
     public ProductDTO receiverRPC(ProductDTO product) {
         LOGGER.debug("Received message from Kafka: {}", product.toString());
-        ProductDTO productPersisted = insertProduct(product);
+        final ProductDTO productPersisted = insertProduct(product);
         productTemplate.send(RESPONSE_PRODUCT_TOPIC, productPersisted);
         return productPersisted;
     }

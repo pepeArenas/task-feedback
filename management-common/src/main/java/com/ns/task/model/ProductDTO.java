@@ -23,6 +23,7 @@ public class ProductDTO implements Serializable {
     @Digits(integer = 5, fraction = 2, message = CommonProperties.INVALID_PRICE_FORMAT)
     private BigDecimal price;
     private String message;
+    private String UUID;
 
     public ProductDTO() {
     }
@@ -75,6 +76,14 @@ public class ProductDTO implements Serializable {
         this.message = message;
     }
 
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", ProductDTO.class.getSimpleName() + "[", "]")
@@ -83,6 +92,7 @@ public class ProductDTO implements Serializable {
                 .add("name='" + name + "'")
                 .add("price=" + price)
                 .add("message='" + message + "'")
+                .add("UUID='" + UUID + "'")
                 .toString();
     }
 }

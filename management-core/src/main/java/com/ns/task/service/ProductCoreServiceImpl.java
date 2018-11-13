@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 @Service
 @Profile("rabbitMQ")
 public class ProductCoreServiceImpl implements ProductService {
-    private ModelMapper mapper;
-    private ProductRepository repository;
+    private final ModelMapper mapper;
+    private final ProductRepository repository;
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired

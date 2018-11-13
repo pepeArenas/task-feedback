@@ -16,7 +16,7 @@ import java.util.List;
 @Profile("rabbitMQ")
 public class ProductServiceImpl implements ProductService {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String GET_ALL_PRODUCTS = "getAllProducts";
     private final RabbitTemplate rabbitTemplate;
     private final RabbitMQProperties properties;
@@ -40,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
                 properties.getRoutingKeyInsertion(),
                 product);
 
-        logger.debug(productDTO);
+        LOGGER.debug(productDTO);
 
         return productDTO;
 

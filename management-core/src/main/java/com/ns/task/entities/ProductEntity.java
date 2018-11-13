@@ -32,6 +32,16 @@ public class ProductEntity {
     private BigDecimal price;
     @Transient
     private String message;
+    @Transient
+    private String UUID;
+
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
 
     public Integer getId() {
         return id;

@@ -1,12 +1,11 @@
-package com.ns.task.services;
-
+package com.ns.task.service;
 
 import com.ns.task.config.properties.CommonProperties;
 import com.ns.task.entities.ProductEntity;
 import com.ns.task.model.ProductDTO;
 import com.ns.task.model.ProductDTOBuilder;
 import com.ns.task.repositories.ProductRepository;
-import com.ns.task.service.ProductCoreServiceImpl;
+import com.ns.task.services.ProductService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,11 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-
 @RunWith(SpringRunner.class)
-public class ProductCoreServiceImpTest {
+public class ProductCoreKafkaServiceImplTest {
     @Mock
     private ProductService productService;
     @MockBean

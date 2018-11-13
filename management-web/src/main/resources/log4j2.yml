@@ -9,7 +9,7 @@ Configutation:
       name: Console_Appender
       target: SYSTEM_OUT
       PatternLayout:
-        pattern: "%highlight{[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - Line %L - %msg%n}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"
+        pattern: "%X{Slf4MDCFilter.UUID} %highlight{[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - Line %L - %msg%n}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"
     File:
       name: File_Appender
       fileName: ${log-path}/management-web.log

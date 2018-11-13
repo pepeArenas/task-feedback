@@ -14,24 +14,26 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
+@Profile("kafka")
 @Controller
-@Profile("rabbitMQ")
-public class ProductController {
-
+public class ProductKafkaController {
     private final ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductKafkaController(ProductService productService) {
         this.productService = productService;
     }
 
     @GetMapping("/product")
     public String showAddProduct(ModelMap model) {
+        final String suuid = UUID.randomUUID().toString();
+        model.put("suuid", suuid);
         model.addAttribute("active", "active");
         model.put("product", new ProductDTOBuilder().createProductDTO());
         model.put("activeAdd", "active");
-        return "addProduct";
+        return "addKafkaProduct";
     }
 
     @GetMapping("/products")
@@ -43,19 +45,13 @@ public class ProductController {
 
     @PostMapping("/product")
     public String saveProduct(@ModelAttribute("product") @Valid ProductDTO product, BindingResult result, Model model) {
-        String view = "productAdded";
+        String view = "productKafkaAdded";
         if (result.hasErrors()) {
-            view = "addProduct";
+            view = "addKafkaProduct";
         } else {
-            final ProductDTO productDTO = productService.insertProduct(product);
-            if (productDTO.getMessage() != null) {
-                model.addAttribute("messageException", productDTO.getMessage());
-                view = "managementError";
-            }
-            model.addAttribute("name", productDTO.getName());
-            model.addAttribute("model", productDTO.getModel());
+            productService.insertProduct(product);
+            model.addAttribute("suuid", product.getUUID());
         }
-
         return view;
     }
 }

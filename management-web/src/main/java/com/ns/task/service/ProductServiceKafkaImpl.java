@@ -23,13 +23,8 @@ public class ProductServiceKafkaImpl implements ProductService {
     private KafkaTemplate<String, ProductDTO> kafkaTemplate;
     private KafkaTemplate<String, ProductDTO[]> productsTemplate;
     private List<ProductDTO> productToReturn = new ArrayList<>();
-    private ProductDTO productPersisted;
     private static final String RESPONSE_PRODUCTS_TOPIC = "t.products";
-    private static final String RESPONSE_PRODUCT_TOPIC = "t.product";
     private CountDownLatch latch = new CountDownLatch(1);
-    private CountDownLatch latchProduct;
-    private final static Object lock = new Object();
-    private boolean isServiceDependantAvailable;
 
     @Autowired
     public void setKafkaTemplate(KafkaTemplate<String, ProductDTO> kafkaTemplate) {
@@ -51,7 +46,7 @@ public class ProductServiceKafkaImpl implements ProductService {
         try {
             latch.await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.debug("The thread has been interrupted {}", e);
         }
 
         LOGGER.debug("READY FOR RETURN TO VIEW");
@@ -59,54 +54,22 @@ public class ProductServiceKafkaImpl implements ProductService {
     }
 
     @KafkaListener(topics = RESPONSE_PRODUCTS_TOPIC, containerFactory = "kafkaProductListenerContainerFactory")
-    public ProductDTO[] readProductsFromTopic(ProductDTO[] products) {
+    public ProductDTO[] readProductsFromTopic(ProductDTO... products) {
         assignRetrieveProductsForView(products);
         latch.countDown();
         return products;
     }
 
-    private void assignRetrieveProductsForView(ProductDTO[] products) {
+    private void assignRetrieveProductsForView(ProductDTO... products) {
         LOGGER.debug("The number of products returned from Kakfa is: {}", products.length);
         productToReturn = Arrays.asList(products);
     }
 
-
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
-        synchronized (lock) {
-            LOGGER.error(isServiceDependantAvailable);
-            productPersisted = new ProductDTO();
-            latchProduct = new CountDownLatch(1);
-            LOGGER.debug("Sending to kafka broker: {}", product);
-            kafkaTemplate.send("t.insert", product);
-            try {
-                latchProduct.await(10, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                LOGGER.error("An exception has occurred while thread was sleep {}", e);
-            }
-            LOGGER.debug("READY FOR RETURN TO VIEW");
-            checkIfServiceIsAvailable();
-        }
-        return productPersisted;
-    }
-
-    private void checkIfServiceIsAvailable() {
-        if (!isServiceDependantAvailable) {
-            productPersisted.setMessage("Service takes more time to respond probably unavailable");
-            LOGGER.error("Service takes more time to respond probably unavailable {}", productPersisted.getMessage());
-        }
-    }
-
-    @KafkaListener(topics = RESPONSE_PRODUCT_TOPIC, containerFactory = "kafkaListenerContainerFactory")
-    public ProductDTO readProductsFromTopic(ProductDTO products) {
-        LOGGER.debug("The product returned from Kakfa is: {}", products);
-        assignRetrieveProductForView(products);
-        latchProduct.countDown();
-        isServiceDependantAvailable = true;
-        return products;
-    }
-
-    private void assignRetrieveProductForView(ProductDTO products) {
-        productPersisted = products;
+        LOGGER.debug("Sending to kafka broker: {}", product);
+        kafkaTemplate.send("t.insert", product);
+        LOGGER.debug("READY FOR RETURN TO VIEW");
+        return product;
     }
 }

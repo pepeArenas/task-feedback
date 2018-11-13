@@ -6,4 +6,4 @@ spring:
       server:
         git:
           uri: https://github.com/pepeArenas/management-cloud-config-repo.git
-          default-label: rabbitMQ
+          default-label: kafka
