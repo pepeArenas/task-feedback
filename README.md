@@ -37,3 +37,14 @@ export DOCKER_KAFKA_HOST=$(ipconfig getifaddr en0)
 
 For more information(https://github.com/wurstmeister/kafka-docker/issues/169)
 
+SOLID Principles
+Single responsibility, this principle was used during the separation of concerns, for example controllers, services etc.
+configuration also are separated.
+Open for extension close for modification,  when programming with interfaces and profiles it give me the possibility of 
+extend functionality for example rabbit kafka profiles are the same behaviour but different implementations
+Liskov substitution principle, I substitute concrete classes for interfaces and it will resolve during runtime
+Interface Segregation: event if I just have a couple of interfaces, both of them fulfill this principle because all
+method belong to the interface
+Dependency Inversion, Here rather than depends on a specific class I depend on Interfaces
+
+
