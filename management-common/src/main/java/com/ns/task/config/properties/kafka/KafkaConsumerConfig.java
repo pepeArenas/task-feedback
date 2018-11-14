@@ -17,14 +17,14 @@ import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @EnableKafka
 @Configuration
 @Profile("kafka")
 public class KafkaConsumerConfig {
-    private Map<String, Object> props = new HashMap<>();
+    private final Map<String, Object> props = new ConcurrentHashMap<>();
     private static final String BOOTSTRAP_ADDRESS = "localhost:9092";
     private static final String GROUP_ID = "group_insert";
     private static final Logger LOGGER = LogManager.getLogger();
@@ -78,7 +78,7 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, ProductDTO> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, ProductDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        final ConcurrentKafkaListenerContainerFactory<String, ProductDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConcurrency(1);
         factory.setConsumerFactory(consumerFactory());
         return factory;
@@ -97,7 +97,7 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, ProductDTO[]> kafkaProductListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, ProductDTO[]> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        final ConcurrentKafkaListenerContainerFactory<String, ProductDTO[]> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConcurrency(1);
         factory.setConsumerFactory(consumerProductsFactory());
         return factory;

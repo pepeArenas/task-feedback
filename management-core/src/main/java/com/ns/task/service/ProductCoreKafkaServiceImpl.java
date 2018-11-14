@@ -57,7 +57,7 @@ public class ProductCoreKafkaServiceImpl implements ProductService {
     }
 
     @KafkaListener(topics = "t.get", containerFactory = "kafkaProductListenerContainerFactory")
-    public ProductDTO[] receiverForAllProductsRPC(ProductDTO[] message) {
+    public ProductDTO[] receiverForAllProductsRPC(ProductDTO... message) {
         final List<ProductDTO> products = getProducts();
         LOGGER.debug("Products returned form DB {}", products);
         final ProductDTO[] productsAsArray = convertListToArray(products);
