@@ -48,7 +48,7 @@ public class ProductController {
             view = "addProduct";
         } else {
             final ProductDTO productDTO = productService.insertProduct(product);
-            if (productDTO.getMessage() != null) {
+             if (productDTO.getMessage() != null) {
                 model.addAttribute("messageException", productDTO.getMessage());
                 view = "managementError";
             }

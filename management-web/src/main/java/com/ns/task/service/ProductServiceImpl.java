@@ -2,6 +2,7 @@ package com.ns.task.service;
 
 import com.ns.task.config.properties.rabbitMQ.RabbitMQProperties;
 import com.ns.task.model.ProductDTO;
+import com.ns.task.model.ProductDTOBuilder;
 import com.ns.task.services.ProductService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,10 +37,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO insertProduct(ProductDTO product) {
-        final ProductDTO productDTO = (ProductDTO) rabbitTemplate.convertSendAndReceive(properties.getExchangesInsertion(),
+        ProductDTO productDTO = (ProductDTO) rabbitTemplate.convertSendAndReceive(properties.getExchangesInsertion(),
                 properties.getRoutingKeyInsertion(),
                 product);
-
+        /*
+        * If product is null is because we do not get response back
+        * from microservice
+        * */
+        if (productDTO == null) {
+            productDTO = new ProductDTOBuilder()
+                    .setMessage("Service Unavailable")
+                    .createProductDTO();
+        }
         LOGGER.debug(productDTO);
 
         return productDTO;
