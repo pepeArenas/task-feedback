@@ -5,7 +5,14 @@
         <h1>Waiting</h1>
         <h3>....</h3>
     </div>
-    <div id="productAdded" align="center">
+    <div id="productAdded" align="center" style="display: none">
+        <h1>Product Added</h1>
+        <h3>Product: <span id="productName"></span> and Model: <span id="productModel"></span> added successfully</h3>
+    </div>
+
+    <div id="exceptionWhenTryInsert" align="center" style="display: none">
+        <h1>An error has occurred:</h1>
+        <h3><span id="productException"></span></h3>
     </div>
 </div>
 <script type="text/javascript">
@@ -17,21 +24,29 @@
         if (COUNTER < MAXIMUM_ATTEMPTS) {
             $.ajax({
                 type: "POST",
-                url: 'topics.html',
+                url: '/topics',
                 data: {"uuid": "${suuid}"},
                 success: function (data) {
                     console.log(Object.keys(data).length);
-
                     if (data !== "") {
+                        console.log("DATA " + data);
                         setCounterMaximum();
-                        console.log(data);
-                        $('#productAdded').html(data);
+                        console.log(data.toString());
+                        if (data['message'] === null) {
+                            $('#productModel').html(data['model']);
+                            $('#productName').html(data['name']);
+                            $('#productAdded').show();
+                            $('#exceptionWhenTryInsert').hide();
+                        } else {
+                            $('#productException').html(data['message']);
+                            $('#exceptionWhenTryInsert').show();
+                            $('#productAdded').hide();
+                        }
                         $('#waiting').hide();
                     } else {
                         incrementCounter();
                     }
-                }
-                ,
+                },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     console.log("ERROR" + textStatus + errorThrown);
                     console.log(returnServiceUnavailable());
@@ -39,6 +54,10 @@
                     $('#waiting').hide();
                 }
             });
+        } else {
+            $('#productException').html("<h3>Service unavailable</h3>");
+            $('#exceptionWhenTryInsert').show();
+            $('#waiting').hide();
         }
     }
 
